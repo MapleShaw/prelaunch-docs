@@ -1,0 +1,238 @@
+---
+title: 'Payments Integration'
+description: 'Accept payments and manage subscriptions with PreLaunch'
+---
+
+## Payments Feature Overview
+
+PreLaunch comes with comprehensive payment capabilities, allowing you to monetize your product even during the pre-launch phase. The template includes integrations with both Paddle and Stripe, two of the most popular payment processors, giving you flexibility in how you handle transactions.
+
+<img src="/images/payments-demo.png" alt="Payments Feature Example" />
+
+## Key Features
+
+- **Multiple Payment Providers**: Support for both Paddle and Stripe payment processors
+- **One-time & Subscription Payments**: Handle both single purchases and recurring subscriptions
+- **Customizable Pricing Plans**: Create and display different pricing tiers
+- **Checkout Flow**: Streamlined checkout experience for customers
+- **Customer Management**: View and manage customer information and subscriptions
+- **Webhook Integration**: Automatically handle payment events
+- **Mobile-Responsive Design**: Payment flows work on all devices
+
+## Supported Payment Processors
+
+### Paddle Integration
+
+PreLaunch includes a comprehensive integration with Paddle, which is particularly well-suited for SaaS businesses:
+
+- **Advantages**: 
+  - Handles VAT/tax calculations and compliance automatically
+  - Built-in subscription management
+  - Supports multiple currencies
+  - Lower setup complexity
+
+[Learn more about Paddle integration](/integrations/paddle)
+
+### Stripe Integration
+
+PreLaunch also supports Stripe, which offers more customization options:
+
+- **Advantages**:
+  - Highly customizable checkout flow
+  - Extensive API options
+  - Support for many different payment methods
+  - Popular in the US market
+
+## Implementing a Pricing Page
+
+PreLaunch includes a ready-to-use pricing component that you can easily customize:
+
+```tsx
+import { Pricing } from '@/components/landing/Pricing';
+
+export default function PricingPage() {
+  return (
+    <div className="pricing-page">
+      <h1>Choose Your Plan</h1>
+      <p>Select the plan that best fits your needs</p>
+      
+      <Pricing />
+    </div>
+  );
+}
+```
+
+## Configuring Pricing Plans
+
+All pricing plans are configured in the `config.ts` file. You can easily modify or add new plans:
+
+```typescript
+// config.ts
+paddle: {
+  plans: [
+    {
+      priceId: "pri_xxxxxxxxxxxxxxxx",  // Paddle price ID
+      id: "basic",
+      name: "Basic Plan",
+      description: "For individuals and small projects",
+      price: 29,
+      priceAnchor: 49,  // Original price (for showing discount)
+      features: [
+        "Feature 1",
+        "Feature 2",
+        "Feature 3"
+      ],
+    },
+    {
+      priceId: "pri_yyyyyyyyyyyyyyyy",  // Paddle price ID
+      id: "pro",
+      name: "Pro Plan",
+      description: "For professional users",
+      price: 79,
+      features: [
+        "Everything in Basic",
+        "Feature 4",
+        "Feature 5",
+        "Feature 6"
+      ],
+      isFeatured: true,  // Highlight this plan
+    },
+    // Add more plans as needed
+  ],
+},
+```
+
+## Checkout Components
+
+PreLaunch provides pre-built checkout buttons for both Paddle and Stripe:
+
+### Paddle Checkout Button
+
+```tsx
+import { ButtonCheckout } from '@/components/ButtonCheckout';
+
+export default function PricingCard() {
+  return (
+    <div className="pricing-card">
+      <h3>Pro Plan</h3>
+      <p className="price">$79/month</p>
+      <ul>
+        <li>Feature 1</li>
+        <li>Feature 2</li>
+        <li>Feature 3</li>
+      </ul>
+      
+      <ButtonCheckout priceId="pri_xxxxxxxxxxxxxxxx" />
+    </div>
+  );
+}
+```
+
+### Stripe Checkout Button
+
+```tsx
+import { ButtonStripeCheckout } from '@/components/ButtonStripeCheckout';
+
+export default function PricingCard() {
+  return (
+    <div className="pricing-card">
+      <h3>Pro Plan</h3>
+      <p className="price">$79/month</p>
+      <ul>
+        <li>Feature 1</li>
+        <li>Feature 2</li>
+        <li>Feature 3</li>
+      </ul>
+      
+      <ButtonStripeCheckout priceId="price_xxxxxxxxxxxxxxxx" />
+    </div>
+  );
+}
+```
+
+## Customer Portal
+
+PreLaunch includes components for customer account management, allowing users to view and manage their subscriptions:
+
+```tsx
+import { ButtonPaddleAccount } from '@/components/ButtonPaddleAccount';
+
+export default function AccountPage() {
+  return (
+    <div className="account-page">
+      <h1>Your Account</h1>
+      
+      <div className="account-management">
+        <h2>Subscription Management</h2>
+        <p>View or update your subscription</p>
+        
+        <ButtonPaddleAccount />
+      </div>
+    </div>
+  );
+}
+```
+
+## Environment Configuration
+
+To use the payment features, you need to set up your environment variables in the `.env.local` file:
+
+### For Paddle:
+
+```
+# Paddle Configuration
+PADDLE_SANDBOX=true  # Set to false for production
+PADDLE_API_KEY=your-api-key-here
+PADDLE_NOTIFICATION_WEBHOOK_SECRET=your-webhook-secret-here
+NEXT_PUBLIC_PADDLE_CLIENT_TOKEN=your-paddle-client-token-here
+```
+
+### For Stripe:
+
+```
+# Stripe Configuration
+STRIPE_PUBLIC_KEY=pk_test_xxxxx
+STRIPE_SECRET_KEY=sk_test_xxxxx
+STRIPE_WEBHOOK_SECRET=whsec_xxxxx
+```
+
+## Best Practices for Payment Implementation
+
+- **Test Thoroughly**: Always test the checkout flow in sandbox/test mode before going live
+- **Set Clear Expectations**: Clearly communicate what users are paying for
+- **Secure Environment Variables**: Never expose your payment API keys in client-side code
+- **Implement Proper Error Handling**: Provide clear feedback when payment issues occur
+- **Monitor Webhooks**: Set up monitoring for payment webhooks to catch any issues
+
+## Troubleshooting Common Issues
+
+<AccordionGroup>
+  <Accordion title="Checkout button not working">
+    Ensure that your environment variables are correctly set up, including the client token for Paddle or the public key for Stripe. Check your browser console for any errors.
+  </Accordion>
+  <Accordion title="Webhooks not receiving events">
+    Verify that your webhook URLs are correctly configured in your Paddle/Stripe dashboard and that your webhook secrets match what's in your environment variables.
+  </Accordion>
+  <Accordion title="Customer portal not loading">
+    Check that the user is authenticated and has an active subscription. Verify that the correct customer ID is being passed to the portal component.
+  </Accordion>
+</AccordionGroup>
+
+## Related Links
+
+<CardGroup cols={2}>
+  <Card
+    title="Paddle Integration"
+    icon="credit-card"
+    href="/integrations/paddle"
+  >
+    Detailed guide on Paddle payment integration
+  </Card>
+  <Card
+    title="Customization"
+    icon="paint-brush"
+    href="/customization/configuration"
+  >
+    Learn how to customize your pricing and checkout experience
+  </Card>
+</CardGroup> 

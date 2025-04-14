@@ -1,0 +1,213 @@
+---
+title: 'Configuration'
+description: 'Learn how to configure your PreLaunch application'
+---
+
+## Configuration Overview
+
+PreLaunch uses a central configuration file to manage application settings. This makes it easy to customize your application without diving into the code. The main configuration file is `config.ts` in the root directory.
+
+## Core Configuration File
+
+The `config.ts` file contains all the main settings for your application:
+
+```typescript
+// config.ts
+import { ConfigProps } from "./types/config";
+
+const config = {
+  // REQUIRED
+  appName: "PreLaunch",
+  // REQUIRED: a short description of your app for SEO tags
+  appDescription: "Focused on product validation phase, helping you quickly deploy a professional website, validate product ideas and collect potential user feedback.",
+  // REQUIRED (no https://, not trailing slash at the end, just the naked domain)
+  domainName: "prelaunch.online",
+  
+  // Other configuration sections...
+} as ConfigProps;
+
+export default config;
+```
+
+## Main Configuration Sections
+
+### Basic Information
+
+```typescript
+appName: "PreLaunch",
+appDescription: "Your app description here",
+domainName: "yourdomain.com",
+```
+
+These settings are used throughout the application for SEO tags, page titles, and metadata.
+
+### Customer Support (Crisp)
+
+```typescript
+crisp: {
+  // Crisp website ID. Set to empty string if you don't use Crisp
+  id: "YOUR_CRISP_ID",
+  // Hide Crisp by default, except on route "/". Crisp is toggled with <ButtonSupport/>
+  onlyShowOnRoutes: ["/"],
+},
+```
+
+PreLaunch integrates with [Crisp](https://crisp.chat/) for customer support chat. You can enable or disable it here.
+
+### Payment Configuration (Paddle)
+
+```typescript
+paddle: {
+  plans: [
+    {
+      priceId: "pri_01jrqpcg09vwepwkfxt1by8np3",
+      id: "template",
+      icon: "/assets/icons/paddle-icon.svg",
+      features: ["Complete landing page template", "SEO optimization", "Waitlist functionality", "High performance loading", "User survey form", "Free updates", "Responsive design", "Source code access", "Dark mode support", "Developer support"],
+      name: "Complete Package",
+      description: "Get all features, one-time payment, lifetime access",
+    },
+    // Add more plans here
+  ],
+},
+```
+
+Configure your pricing plans, features, and Paddle price IDs here. Each plan should have a unique ID and a valid Paddle price ID.
+
+### AWS Configuration (Optional)
+
+```typescript
+aws: {
+  // If you use AWS S3/Cloudfront, put values in here
+  bucket: "bucket-name",
+  bucketUrl: `https://bucket-name.s3.amazonaws.com/`,
+  cdn: "https://cdn-id.cloudfront.net/",
+},
+```
+
+If you use AWS S3 for file storage and CloudFront for CDN, configure your bucket and CDN URLs here.
+
+### Email Configuration (Resend)
+
+```typescript
+resend: {
+  // REQUIRED — Email 'From' field to be used when sending magic login links
+  fromNoReply: `PreLaunch <noreply@prelaunch.online>`,
+  // REQUIRED — Email 'From' field to be used when sending other emails, like abandoned carts, updates etc..
+  fromAdmin: `Team at PreLaunch <team@prelaunch.online>`,
+  // Support email shown to customer. Leave empty if not needed
+  supportEmail: "support@prelaunch.online",
+},
+```
+
+Configure your email sender information for transactional emails. PreLaunch uses [Resend](https://resend.com/) for email delivery.
+
+### Theme Configuration
+
+```typescript
+colors: {
+  // The DaisyUI theme to use. Leave blank for default (light & dark mode)
+  theme: "",
+  // This color will be reflected on the whole app outside of the document
+  main: "#3b82f6",
+},
+```
+
+Set your application theme and primary color here. PreLaunch uses [DaisyUI](https://daisyui.com/) for theming.
+
+### Authentication Configuration
+
+```typescript
+auth: {
+  // The path to log in users. Used to protect private routes
+  loginUrl: "/api/auth/signin",
+  // The path to redirect users after successful login
+  callbackUrl: "/",
+},
+```
+
+Configure your authentication routes and redirect URLs.
+
+## Environment Variables
+
+In addition to the `config.ts` file, PreLaunch also uses environment variables for sensitive information. These should be set in your `.env.local` file:
+
+```
+# Basic Configuration
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your_nextauth_secret
+
+# Database (MongoDB)
+MONGODB_URI=your_mongodb_uri
+
+# Email (Resend)
+RESEND_API_KEY=your_resend_api_key
+
+# Paddle Payment
+PADDLE_SANDBOX=true
+PADDLE_API_KEY=your-api-key-here
+PADDLE_NOTIFICATION_WEBHOOK_SECRET=your-webhook-secret-here
+NEXT_PUBLIC_PADDLE_CLIENT_TOKEN=your-paddle-client-token-here
+
+# Analytics
+NEXT_PUBLIC_GA_MEASUREMENT_ID=your_ga_id
+```
+
+## Creating a Custom Configuration Type
+
+PreLaunch uses TypeScript for type safety. If you need to extend the configuration with new properties, you should update the `ConfigProps` type in `types/config.ts`:
+
+```typescript
+// types/config.ts
+export interface ConfigProps {
+  appName: string;
+  appDescription: string;
+  domainName: string;
+  // Add your new properties here
+  myCustomConfig?: {
+    setting1: string;
+    setting2: number;
+  };
+  // Other existing properties...
+}
+```
+
+## Best Practices
+
+- **Keep Sensitive Information in Environment Variables**: Never put API keys, secrets, or passwords in `config.ts`
+- **Use Strong NEXTAUTH_SECRET**: This value should be a long, random string to secure authentication
+- **Review All Required Fields**: Make sure all fields marked as "REQUIRED" are filled in
+- **Use Development/Production Environments**: Use different values for development and production environments
+
+## Common Questions
+
+<AccordionGroup>
+  <Accordion title="How do I add a new pricing plan?">
+    Add a new object to the `plans` array in the `paddle` section of `config.ts`. Make sure it has a unique `id` and a valid Paddle `priceId`.
+  </Accordion>
+  <Accordion title="How do I change the primary color of the application?">
+    Update the `main` color in the `colors` section of `config.ts`. Use a valid hex color code (e.g., "#ff5500").
+  </Accordion>
+  <Accordion title="How do I update SEO information?">
+    Change the `appName` and `appDescription` in `config.ts`. These will be used for default SEO tags throughout the application.
+  </Accordion>
+</AccordionGroup>
+
+## Related Links
+
+<CardGroup cols={2}>
+  <Card
+    title="Theme Customization"
+    icon="paint-brush"
+    href="/customization/themes"
+  >
+    Learn how to customize the visual appearance of your application
+  </Card>
+  <Card
+    title="Content Customization"
+    icon="file-alt"
+    href="/customization/content"
+  >
+    Learn how to modify the text and content of your application
+  </Card>
+</CardGroup> 

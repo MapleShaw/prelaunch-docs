@@ -1,0 +1,307 @@
+---
+title: 'Theme Customization'
+description: 'Customize the visual appearance of your PreLaunch application'
+---
+
+## Theme Customization Overview
+
+PreLaunch is built with customization in mind, allowing you to easily adjust the visual appearance to match your brand identity. The template uses Tailwind CSS and DaisyUI for styling, providing a robust foundation for customization.
+
+## Color Scheme Customization
+
+### Primary Color
+
+The easiest way to customize the color scheme is by changing the primary color in `config.ts`:
+
+```typescript
+// config.ts
+colors: {
+  // The DaisyUI theme to use (leave blank for default light & dark mode)
+  theme: "",
+  // Primary color used throughout the application
+  main: "#3b82f6", // Default blue, change to your brand color
+},
+```
+
+This primary color is used for buttons, links, and accent elements throughout the application.
+
+### Full Theme Customization
+
+For more comprehensive theme customization, you can edit the Tailwind configuration in `tailwind.config.js`:
+
+```js
+// tailwind.config.js
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        // Add custom colors here
+        primary: {
+          50: '#f0f9ff',
+          100: '#e0f2fe',
+          // ... other shades
+          600: '#0284c7',
+          700: '#0369a1',
+        },
+        secondary: {
+          // Your secondary color palette
+        },
+        // Add more color palettes as needed
+      },
+    },
+  },
+  // Other Tailwind configuration...
+};
+```
+
+### DaisyUI Themes
+
+PreLaunch uses DaisyUI for theming, which provides several pre-built themes. You can select a theme in `config.ts`:
+
+```typescript
+// config.ts
+colors: {
+  // The DaisyUI theme to use
+  theme: "light", // Options: "light", "dark", "cupcake", "bumblebee", etc.
+  // ...
+},
+```
+
+To use a custom DaisyUI theme, modify the `tailwind.config.js` file:
+
+```js
+// tailwind.config.js
+module.exports = {
+  // ...
+  daisyui: {
+    themes: [
+      {
+        mytheme: {
+          "primary": "#4f46e5",
+          "secondary": "#f59e0b",
+          "accent": "#37cdbe",
+          "neutral": "#3d4451",
+          "base-100": "#ffffff",
+          // ... more color customizations
+        },
+      },
+      "light", // Include other themes you want to use
+      "dark",
+    ],
+  },
+  // ...
+};
+```
+
+Then reference your custom theme in `config.ts`:
+
+```typescript
+// config.ts
+colors: {
+  theme: "mytheme", // Your custom theme name
+  // ...
+},
+```
+
+## Dark Mode / Light Mode
+
+PreLaunch automatically supports dark and light modes. The default configuration includes both modes and automatically switches based on user preferences.
+
+### Controlling Dark Mode
+
+You can customize how dark mode works by modifying the `tailwind.config.js` file:
+
+```js
+// tailwind.config.js
+module.exports = {
+  // ...
+  darkMode: 'class', // or 'media' for OS preference-based switching
+  // ...
+};
+```
+
+### Customizing Dark Mode Appearance
+
+The dark mode appearance can be customized by using Tailwind's dark mode variant:
+
+```jsx
+<div className="bg-white dark:bg-gray-800 text-black dark:text-white">
+  This text will be black on white in light mode, and white on dark gray in dark mode.
+</div>
+```
+
+## Typography Customization
+
+### Font Family
+
+To change the font family, update the `tailwind.config.js` file:
+
+```js
+// tailwind.config.js
+const defaultTheme = require('tailwindcss/defaultTheme');
+
+module.exports = {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter', ...defaultTheme.fontFamily.sans],
+        heading: ['Montserrat', ...defaultTheme.fontFamily.sans],
+        // Add more custom font families as needed
+      },
+    },
+  },
+  // ...
+};
+```
+
+Then add the font imports to your CSS or update the font links in your HTML head.
+
+### Font Sizes
+
+Customize font sizes in `tailwind.config.js`:
+
+```js
+// tailwind.config.js
+module.exports = {
+  theme: {
+    extend: {
+      fontSize: {
+        'xs': '0.75rem',
+        'sm': '0.875rem',
+        'base': '1rem',
+        'lg': '1.125rem',
+        'xl': '1.25rem',
+        '2xl': '1.5rem',
+        // Add custom sizes as needed
+      },
+    },
+  },
+  // ...
+};
+```
+
+## Component Styling
+
+### Button Styling
+
+PreLaunch includes several button components that can be easily customized. To modify the default button styling, edit the respective component file:
+
+```tsx
+// components/ui/Button.tsx
+// Look for the className definition
+const buttonClasses = classNames(
+  'inline-flex items-center justify-center rounded-md font-medium transition-colors',
+  'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500',
+  {
+    'px-4 py-2 text-sm': size === 'default',
+    'px-3 py-1.5 text-xs': size === 'small',
+    'px-5 py-2.5 text-base': size === 'large',
+    // Add your custom variants here
+  },
+  // ... more class definitions
+);
+```
+
+### Card Styling
+
+To customize card styles, edit the relevant card components or create your own card component with your desired styling:
+
+```tsx
+// components/ui/Card.tsx
+const cardClasses = classNames(
+  'bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden',
+  'border border-gray-200 dark:border-gray-700',
+  // Add your custom styles here
+);
+```
+
+## CSS Variables
+
+PreLaunch uses CSS variables for consistent theming. You can override these variables in `styles/globals.css`:
+
+```css
+:root {
+  --color-primary: #3b82f6;
+  --color-secondary: #f59e0b;
+  --color-background: #ffffff;
+  --color-text: #1f2937;
+  /* Add your custom variables here */
+}
+
+.dark {
+  --color-primary: #60a5fa;
+  --color-secondary: #fbbf24;
+  --color-background: #111827;
+  --color-text: #f9fafb;
+  /* Dark mode overrides */
+}
+```
+
+## Adding Custom Components
+
+You can create custom themed components by adding new files to the `components/ui/` directory:
+
+```tsx
+// components/ui/CustomComponent.tsx
+import classNames from 'classnames';
+
+interface CustomComponentProps {
+  variant?: 'default' | 'outline' | 'custom';
+  // Other props
+}
+
+export const CustomComponent = ({ 
+  variant = 'default',
+  // Other props
+}: CustomComponentProps) => {
+  const classes = classNames(
+    'base-class',
+    {
+      'default-variant-class': variant === 'default',
+      'outline-variant-class': variant === 'outline',
+      'custom-variant-class': variant === 'custom',
+    }
+  );
+  
+  return (
+    <div className={classes}>
+      {/* Component content */}
+    </div>
+  );
+};
+```
+
+## Common Questions
+
+<AccordionGroup>
+  <Accordion title="How do I add Google Fonts to my project?">
+    1. Add the font link in your HTML head or _document.js file
+    2. Update the fontFamily in tailwind.config.js to include your new font
+    3. Apply the font using Tailwind classes or update the default font in globals.css
+  </Accordion>
+  <Accordion title="How do I create a completely custom theme?">
+    Create a custom theme by defining your own theme in the daisyui.themes section of tailwind.config.js. You can start by copying one of the existing themes and modifying it to match your brand colors.
+  </Accordion>
+  <Accordion title="Can I disable dark mode?">
+    Yes, you can effectively disable dark mode by only using a single theme and removing dark mode variants from your components. Update your tailwind.config.js to use a single theme and remove darkMode settings.
+  </Accordion>
+</AccordionGroup>
+
+## Related Links
+
+<CardGroup cols={2}>
+  <Card
+    title="Configuration"
+    icon="gear"
+    href="/customization/configuration"
+  >
+    Learn how to configure your PreLaunch application settings
+  </Card>
+  <Card
+    title="Content Customization"
+    icon="file-alt"
+    href="/customization/content"
+  >
+    Learn how to customize the text and content of your application
+  </Card>
+</CardGroup> 

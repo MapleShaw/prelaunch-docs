@@ -1,0 +1,344 @@
+---
+title: 'Content Customization'
+description: 'Learn how to customize the content and text of your PreLaunch application'
+---
+
+## Content Customization Overview
+
+PreLaunch allows you to easily customize all the text content in your application. This document will guide you through the different ways to modify content, from simple text changes to creating custom content components.
+
+## Translation Files
+
+The primary way to customize text content is through the translation files located in the `locales/` directory:
+
+```
+locales/
+├── en/              # English translations
+│   ├── common.json  # Shared translations
+│   ├── home.json    # Home page translations
+│   └── ...          # Other page/component translations
+└── zh/              # Chinese translations (if you use multilanguage)
+    ├── common.json
+    ├── home.json
+    └── ...
+```
+
+### Customizing Text Content
+
+To modify text content, edit the appropriate JSON file in the `locales/en/` directory:
+
+```json
+// locales/en/home.json
+{
+  "hero": {
+    "title": "Validate Your Product Idea",
+    "subtitle": "Build a professional landing page, collect user feedback, and validate your product before launch.",
+    "cta": "Get Started"
+  },
+  "features": {
+    "title": "Key Features",
+    "list": [
+      {
+        "title": "User Feedback",
+        "description": "Collect valuable feedback from potential users."
+      },
+      // More features...
+    ]
+  }
+}
+```
+
+## Page Content
+
+### Editing Page Content
+
+Each page in your application has its own content. To modify page content, edit the corresponding page component:
+
+```tsx
+// app/page.tsx
+import { useTranslations } from 'next-intl';
+
+export default function HomePage() {
+  const t = useTranslations('home');
+  
+  return (
+    <div className="home-page">
+      <section className="hero">
+        <h1>{t('hero.title')}</h1>
+        <p>{t('hero.subtitle')}</p>
+        <Button>{t('hero.cta')}</Button>
+      </section>
+      
+      {/* More page content... */}
+    </div>
+  );
+}
+```
+
+### Creating Custom Pages
+
+You can create new pages by adding files to the `app/` directory:
+
+```tsx
+// app/custom-page/page.tsx
+import { useTranslations } from 'next-intl';
+
+export default function CustomPage() {
+  const t = useTranslations('custom');
+  
+  return (
+    <div className="custom-page">
+      <h1>{t('title')}</h1>
+      <div className="content">
+        {/* Your custom content here */}
+      </div>
+    </div>
+  );
+}
+```
+
+Don't forget to add corresponding translations in `locales/en/custom.json`.
+
+## Components Content
+
+### Reusable Content Components
+
+For content that appears in multiple places, you can create reusable components:
+
+```tsx
+// components/content/FeatureCard.tsx
+import { useTranslations } from 'next-intl';
+
+interface FeatureCardProps {
+  featureKey: string;
+  icon?: React.ReactNode;
+}
+
+export function FeatureCard({ featureKey, icon }: FeatureCardProps) {
+  const t = useTranslations('features');
+  
+  return (
+    <div className="feature-card">
+      {icon && <div className="icon">{icon}</div>}
+      <h3>{t(`${featureKey}.title`)}</h3>
+      <p>{t(`${featureKey}.description`)}</p>
+    </div>
+  );
+}
+```
+
+Then use it in your pages:
+
+```tsx
+<FeatureCard featureKey="waitlist" icon={<ListIcon />} />
+```
+
+## Dynamic Content
+
+### Content from API
+
+For dynamic content that comes from an API, you can fetch data in your page components:
+
+```tsx
+// app/blog/page.tsx
+import { fetchBlogPosts } from '@/libs/api';
+
+export default async function BlogPage() {
+  // Fetch blog posts
+  const posts = await fetchBlogPosts();
+  
+  return (
+    <div className="blog-page">
+      <h1>Blog</h1>
+      <div className="posts-grid">
+        {posts.map((post) => (
+          <BlogPostCard key={post.id} post={post} />
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+### Content from CMS
+
+If you're using a CMS like Contentful, Sanity, or Strapi, you can integrate it to manage your content:
+
+```tsx
+// libs/cms.ts
+import { createClient } from 'contentful';
+
+const client = createClient({
+  space: process.env.CONTENTFUL_SPACE_ID!,
+  accessToken: process.env.CONTENTFUL_ACCESS_TOKEN!,
+});
+
+export async function getHomepageContent() {
+  const entry = await client.getEntry('homepage');
+  return entry.fields;
+}
+
+// Use in your component
+// app/page.tsx
+import { getHomepageContent } from '@/libs/cms';
+
+export default async function HomePage() {
+  const content = await getHomepageContent();
+  
+  return (
+    <div className="home-page">
+      <h1>{content.title}</h1>
+      <p>{content.subtitle}</p>
+      {/* More content... */}
+    </div>
+  );
+}
+```
+
+## Markdown Content
+
+PreLaunch supports Markdown content rendering for rich text content:
+
+```tsx
+// components/content/MarkdownContent.tsx
+import ReactMarkdown from 'react-markdown';
+
+interface MarkdownContentProps {
+  content: string;
+}
+
+export function MarkdownContent({ content }: MarkdownContentProps) {
+  return (
+    <div className="markdown-content">
+      <ReactMarkdown>{content}</ReactMarkdown>
+    </div>
+  );
+}
+```
+
+You can then use this component to display Markdown content:
+
+```tsx
+<MarkdownContent content={`
+# Welcome to PreLaunch
+
+This is a **rich text** content block with:
+- Bullet points
+- _Italic text_
+- And more formatting options
+`} />
+```
+
+## SEO Content
+
+### Page Metadata
+
+To customize SEO metadata for your pages, modify the metadata export in your page files:
+
+```tsx
+// app/about/page.tsx
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'About Us | PreLaunch',
+  description: 'Learn more about PreLaunch and our mission to help validate product ideas.',
+  openGraph: {
+    title: 'About PreLaunch',
+    description: 'Learn more about PreLaunch and our mission to help validate product ideas.',
+    images: ['/images/about-og.jpg'],
+  },
+};
+
+export default function AboutPage() {
+  // Your page content...
+}
+```
+
+### Default Metadata
+
+Default metadata is configured in the `app/layout.tsx` file and is derived from the `config.ts` file:
+
+```tsx
+// app/layout.tsx
+import { Metadata } from 'next';
+import config from '@/config';
+
+export const metadata: Metadata = {
+  title: {
+    default: config.appName,
+    template: `%s | ${config.appName}`,
+  },
+  description: config.appDescription,
+  // More metadata...
+};
+```
+
+## Legal Content
+
+### Privacy Policy and Terms of Service
+
+For legal pages like Privacy Policy and Terms of Service, you can create dedicated page components:
+
+```tsx
+// app/privacy-policy/page.tsx
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Privacy Policy | PreLaunch',
+  description: 'Our privacy policy and data practices.',
+};
+
+export default function PrivacyPolicyPage() {
+  return (
+    <div className="privacy-policy-page">
+      <h1>Privacy Policy</h1>
+      <div className="content">
+        {/* Your privacy policy content here */}
+        <h2>1. Information We Collect</h2>
+        <p>...</p>
+        
+        <h2>2. How We Use Your Information</h2>
+        <p>...</p>
+        
+        {/* More sections... */}
+      </div>
+    </div>
+  );
+}
+```
+
+## Common Questions
+
+<AccordionGroup>
+  <Accordion title="How do I add new text that doesn't exist in the translation files?">
+    First, add the new text as a key-value pair in the appropriate translation file (e.g., `locales/en/common.json`). Then, use the `useTranslations` hook to access and display the text in your component.
+  </Accordion>
+  <Accordion title="Can I use HTML in my translation strings?">
+    The translation system doesn't directly support HTML tags. Instead, break down the content into smaller pieces or use components for more complex layouts. For rich text, consider using Markdown with the `react-markdown` package.
+  </Accordion>
+  <Accordion title="How do I create a new page with custom content?">
+    1. Create a new file in the appropriate location in the `app/` directory
+    2. Add any required translation keys to your translation files
+    3. Create your page component with the desired content and layout
+    4. Use the `useTranslations` hook to access localized text
+  </Accordion>
+</AccordionGroup>
+
+## Related Links
+
+<CardGroup cols={2}>
+  <Card
+    title="Multi-language Support"
+    icon="language"
+    href="/features/multilanguage"
+  >
+    Learn how to add and manage multiple languages in your application
+  </Card>
+  <Card
+    title="Configuration Documentation"
+    icon="gear"
+    href="/customization/configuration"
+  >
+    Learn about the overall configuration of PreLaunch
+  </Card>
+</CardGroup> 

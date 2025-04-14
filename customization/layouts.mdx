@@ -1,0 +1,305 @@
+---
+title: 'Layout Customization'
+description: 'Customize the page layouts and structure of your PreLaunch application'
+---
+
+## Layout Customization Overview
+
+PreLaunch provides a flexible layout system that allows you to customize the overall structure and appearance of your application. This document will guide you through modifying existing layouts or creating new layouts to meet your needs.
+
+## Layout Components
+
+### Main Layout Components
+
+PreLaunch uses the following main layout components:
+
+1. **Root Layout (`app/layout.tsx`)** - The root layout for your application, containing global elements
+2. **Page Layouts** - Layouts for specific pages, such as home page, login page, etc.
+3. **Component Layouts** - Reusable layout components, such as navigation bars, footers, etc.
+
+### Layout Hierarchy
+
+NextJS 13+ uses a nested layout system, where:
+- The root layout (`app/layout.tsx`) wraps the entire application
+- Child routes can have their own layout files
+- Layouts are automatically nested
+
+```
+app/
+├── layout.tsx      # Root layout
+├── page.tsx        # Home page
+├── (auth)/
+│   ├── layout.tsx  # Auth pages layout
+│   ├── login/
+│   │   └── page.tsx
+│   └── register/
+│       └── page.tsx
+└── dashboard/
+    ├── layout.tsx  # Dashboard layout
+    └── page.tsx
+```
+
+## Customizing the Root Layout
+
+The root layout (`app/layout.tsx`) contains global elements for your application, such as navigation bars and footers. You can modify the overall layout by editing this file.
+
+```tsx
+// app/layout.tsx
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body>
+        <Header /> {/* Global navigation bar */}
+        <main>{children}</main> {/* Page content */}
+        <Footer /> {/* Global footer */}
+      </body>
+    </html>
+  );
+}
+```
+
+### Modifying Global Layout Elements
+
+To modify the global navigation bar or footer, edit the corresponding components:
+
+```tsx
+// components/layout/Header.tsx
+export default function Header() {
+  return (
+    <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+        <Logo />
+        <Navigation />
+        <UserMenu />
+      </div>
+    </header>
+  );
+}
+```
+
+## Creating Page-Specific Layouts
+
+Create custom layouts for specific pages or groups of pages:
+
+1. Create a `layout.tsx` file in the appropriate route folder
+2. Define your custom layout component
+
+```tsx
+// app/dashboard/layout.tsx
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex min-h-screen">
+      <Sidebar /> {/* Dashboard sidebar */}
+      <div className="flex-1 p-8">{children}</div>
+    </div>
+  );
+}
+```
+
+## Responsive Layouts
+
+PreLaunch uses Tailwind CSS for responsive design. You can use Tailwind's responsive prefixes to create layouts that adapt to different screen sizes:
+
+```tsx
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  {/* Content will display in 1 column on small screens, 2 on medium, and 3 on large */}
+  <Card />
+  <Card />
+  <Card />
+</div>
+```
+
+### Common Responsive Layout Patterns
+
+1. **Navigation Bar Transformation**: Use a hamburger menu on mobile devices and horizontal navigation on desktop devices
+
+```tsx
+// Simplified example
+<nav>
+  {/* Mobile hamburger menu */}
+  <div className="block md:hidden">
+    <HamburgerMenu />
+  </div>
+  
+  {/* Desktop horizontal navigation */}
+  <div className="hidden md:flex space-x-4">
+    <Link href="/">Home</Link>
+    <Link href="/features">Features</Link>
+    <Link href="/pricing">Pricing</Link>
+    <Link href="/contact">Contact Us</Link>
+  </div>
+</nav>
+```
+
+2. **Content and Sidebar**: Display side-by-side on large screens, stacked on small screens
+
+```tsx
+<div className="flex flex-col lg:flex-row">
+  <main className="w-full lg:w-2/3 p-4">
+    {/* Main content */}
+  </main>
+  <aside className="w-full lg:w-1/3 p-4">
+    {/* Sidebar content */}
+  </aside>
+</div>
+```
+
+## Customizing Page Containers
+
+You can adjust the width and spacing of your content by modifying the container component:
+
+```tsx
+// components/ui/Container.tsx
+interface ContainerProps {
+  children: React.ReactNode;
+  className?: string;
+  size?: 'small' | 'default' | 'large' | 'full';
+}
+
+export function Container({ 
+  children, 
+  className = '',
+  size = 'default' 
+}: ContainerProps) {
+  const sizeClasses = {
+    small: 'max-w-3xl',
+    default: 'max-w-6xl',
+    large: 'max-w-7xl',
+    full: 'max-w-full',
+  };
+  
+  return (
+    <div className={`mx-auto px-4 ${sizeClasses[size]} ${className}`}>
+      {children}
+    </div>
+  );
+}
+```
+
+Then use it in your pages:
+
+```tsx
+<Container size="large">
+  <PageContent />
+</Container>
+```
+
+## Creating New Layout Components
+
+You can create new layout components to meet specific needs:
+
+```tsx
+// components/layout/TwoColumnLayout.tsx
+interface TwoColumnLayoutProps {
+  main: React.ReactNode;
+  sidebar: React.ReactNode;
+  sidebarPosition?: 'left' | 'right';
+  sidebarWidth?: 'narrow' | 'default' | 'wide';
+}
+
+export function TwoColumnLayout({
+  main,
+  sidebar,
+  sidebarPosition = 'right',
+  sidebarWidth = 'default',
+}: TwoColumnLayoutProps) {
+  const widthClasses = {
+    narrow: 'lg:w-1/4',
+    default: 'lg:w-1/3',
+    wide: 'lg:w-2/5',
+  };
+  
+  const mainWidthClass = {
+    narrow: 'lg:w-3/4',
+    default: 'lg:w-2/3',
+    wide: 'lg:w-3/5',
+  };
+  
+  return (
+    <div className="flex flex-col lg:flex-row">
+      {sidebarPosition === 'left' && (
+        <aside className={`w-full ${widthClasses[sidebarWidth]}`}>
+          {sidebar}
+        </aside>
+      )}
+      
+      <main className={`w-full ${mainWidthClass[sidebarWidth]}`}>
+        {main}
+      </main>
+      
+      {sidebarPosition === 'right' && (
+        <aside className={`w-full ${widthClasses[sidebarWidth]}`}>
+          {sidebar}
+        </aside>
+      )}
+    </div>
+  );
+}
+```
+
+## Layout Template Replacement
+
+If you need to completely replace the layout for a page, you can create a new page component:
+
+1. Create a new layout component
+2. Replace the default layout in the appropriate page file
+
+```tsx
+// app/alternative-homepage/page.tsx
+import { AlternativeLayout } from '@/components/layout/AlternativeLayout';
+import { HomePageContent } from '@/components/pages/HomePageContent';
+
+export default function AlternativeHomePage() {
+  return (
+    <AlternativeLayout>
+      <HomePageContent />
+    </AlternativeLayout>
+  );
+}
+```
+
+## Common Questions
+
+<AccordionGroup>
+  <Accordion title="How do I remove the global navigation bar on a specific page?">
+    Create a specific layout component without the navigation bar and use that layout in the route folder for that page. In NextJS 13+, you can create a layout.tsx file for a specific route that includes only the elements you need.
+  </Accordion>
+  <Accordion title="How do I create different layouts for mobile devices?">
+    Use Tailwind's responsive prefixes (like sm:, md:, lg:) to apply different styles based on screen size. You can also use the useMediaQuery hook to conditionally render different layout components at the component level.
+  </Accordion>
+  <Accordion title="How do I center the page content?">
+    Use the Container component along with Tailwind utility classes:
+    ```tsx
+    <Container className="flex items-center justify-center min-h-screen">
+      <YourPageContent />
+    </Container>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Related Links
+
+<CardGroup cols={2}>
+  <Card
+    title="Theme Customization"
+    icon="palette"
+    href="/customization/themes"
+  >
+    Learn how to customize the visual theme of your application
+  </Card>
+  <Card
+    title="Component Customization"
+    icon="puzzle-piece"
+    href="/customization/components"
+  >
+    Learn how to customize and create UI components
+  </Card>
+</CardGroup> 
