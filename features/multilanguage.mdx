@@ -1,0 +1,164 @@
+---
+title: 'Multi-language Support'
+description: 'Add multi-language support to your application and expand your global user base'
+---
+
+## Multi-language Feature Overview
+
+PreLaunch comes with built-in multi-language support, offering English and Chinese languages by default, which you can easily extend to other languages. This functionality is implemented using [next-intl](https://next-intl-docs.vercel.app/) and features:
+
+- Support for multi-language routes (e.g., `/zh/pricing` and `/en/pricing`)
+- Language switching without page refreshes
+- Automatic default language selection based on user browser settings
+- Support for rich text and formatted content
+
+## Supported Languages
+
+Currently, PreLaunch supports the following languages by default:
+
+| Language Code | Language Name |
+| --- | --- |
+| `en` | English |
+| `zh` | Chinese |
+
+## Using Multi-language Features
+
+### Content Translation
+
+All translated text is stored in the `locales/` directory:
+
+```
+locales/
+├── en/
+│   ├── common.json
+│   ├── home.json
+│   └── ...
+└── zh/
+    ├── common.json
+    ├── home.json
+    └── ...
+```
+
+Each JSON file contains translations for specific pages or components:
+
+```json
+// locales/zh/home.json example
+{
+  "title": "快速构建您的登陆页面",
+  "subtitle": "用于产品验证的高质量模板",
+  "cta": "立即开始",
+  "features": {
+    "title": "核心功能",
+    "items": [
+      {
+        "title": "多语言支持",
+        "description": "内置中英文支持，易于扩展到其他语言"
+      },
+      // More features...
+    ]
+  }
+}
+```
+
+### Using Translations in Components
+
+In React components:
+
+```tsx
+import { useTranslations } from 'next-intl';
+
+export default function Hero() {
+  // 'home' corresponds to locales/<language>/home.json file
+  const t = useTranslations('home');
+
+  return (
+    <div>
+      <h1>{t('title')}</h1>
+      <p>{t('subtitle')}</p>
+      <button>{t('cta')}</button>
+    </div>
+  );
+}
+```
+
+### Using Translations in Pages
+
+In Next.js pages:
+
+```tsx
+import { useTranslations } from 'next-intl';
+
+// For App Router
+export default function Page() {
+  const t = useTranslations('common');
+  
+  return (
+    <div>
+      <h1>{t('title')}</h1>
+      {/* Content... */}
+    </div>
+  );
+}
+```
+
+## Adding New Languages
+
+To add a new language, follow these steps:
+
+### 1. Update Configuration
+
+Edit the `middleware.ts` file to add the new language code:
+
+```typescript
+// middleware.ts
+export const config = {
+  // Modify this to add new language codes, e.g., 'fr' for French
+  matcher: ['/((?!api|_next|.*\\..*).*)']
+}
+
+export default createMiddleware({
+  // Add new language code to this array
+  locales: ['en', 'zh', 'fr'],
+  defaultLocale: 'en'
+});
+```
+
+### 2. Create Translation Files
+
+Copy an existing language directory (such as `locales/en/`) and create a new language directory:
+
+```bash
+cp -r locales/en locales/fr
+```
+
+Then translate the content in each JSON file.
+
+### 3. Add Language Selector
+
+PreLaunch already includes a language selector component that will automatically display new languages in the dropdown menu once added.
+
+## Best Practices
+
+- **Use Namespaces**: Group translations into different JSON files to keep your project organized
+- **Maintain Key Consistency**: Use the same key structure across all language files
+- **Use Parameters**: For text with variables, use parameters: `t('welcome', { name: 'John' })`
+- **Use Plurals**: next-intl supports plural forms, which can be used with `t('items', { count: 5 })`
+
+## Related Links
+
+<CardGroup cols={2}>
+  <Card
+    title="next-intl Official Documentation"
+    icon="book"
+    href="https://next-intl-docs.vercel.app/"
+  >
+    Learn more advanced features of next-intl
+  </Card>
+  <Card
+    title="Configuration Documentation"
+    icon="gear"
+    href="/customization/configuration"
+  >
+    Learn about the overall configuration of PreLaunch
+  </Card>
+</CardGroup> 

@@ -1,97 +1,145 @@
 ---
-title: 'Quickstart'
-description: 'Start building awesome documentation in under 5 minutes'
+title: 'Quick Start'
+description: 'Get up and running with PreLaunch in minutes'
 ---
 
-## Setup your development
+## Installation
 
-Learn how to update your docs locally and deploy them to the public.
+Follow these steps to get started with PreLaunch:
 
-### Edit and preview
+### 1. Clone the Repository
 
-<AccordionGroup>
-  <Accordion icon="github" title="Clone your docs locally">
-    During the onboarding process, we created a repository on your Github with
-    your docs content. You can find this repository on our
-    [dashboard](https://dashboard.mintlify.com). To clone the repository
-    locally, follow these
-    [instructions](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
-    in your terminal.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Preview changes">
-    Previewing helps you make sure your changes look as intended. We built a
-    command line interface to render these changes locally. 
-    1. Install the
-    [Mintlify CLI](https://www.npmjs.com/package/mintlify) to preview the
-    documentation changes locally with this command: ``` npm i -g mintlify ```
-    2. Run the following command at the root of your documentation (where
-    `docs.json` is): ``` mintlify dev ```
-    <Note>
-      If you’re currently using the legacy ```mint.json``` configuration file, please update the Mintlify CLI:
+```bash
+git clone https://github.com/your-repo/prelaunch.git
+cd prelaunch
+```
 
+### 2. Install Dependencies
 
-      ```npm i -g mintlify@latest```
-      And run the new upgrade command in your docs repository:
+Use your preferred package manager to install the dependencies:
 
-      ```mintlify upgrade```
-      You should now be using the new ```docs.json``` configuration file. Feel free to delete the ```mint.json``` file from your repository.
-    </Note>
-  </Accordion>
-</AccordionGroup>
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
 
-### Deploy your changes
+### 3. Configure Environment Variables
 
-<AccordionGroup>
+Copy the `.env.local.example` file to `.env.local` and fill in the necessary environment variables:
 
-<Accordion icon="message-bot" title="Install our Github app">
-  Our Github app automatically deploys your changes to your docs site, so you
-  don't need to manage deployments yourself. You can find the link to install on
-  your [dashboard](https://dashboard.mintlify.com). Once the bot has been
-  successfully installed, there should be a check mark next to the commit hash
-  of the repo.
-</Accordion>
-<Accordion icon="rocket" title="Push your changes">
-  [Commit and push your changes to
-  Git](https://docs.github.com/en/get-started/using-git/pushing-commits-to-a-remote-repository#about-git-push)
-  for your changes to update in your docs site. If you push and don't see that
-  the Github app successfully deployed your changes, you can also manually
-  update your docs through our [dashboard](https://dashboard.mintlify.com).
-</Accordion>
+```bash
+cp .env.local.example .env.local
+```
 
-</AccordionGroup>
+Key environment variables:
 
-## Update your docs
+```
+# Basic Configuration
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your_nextauth_secret
 
-Add content directly in your files with MDX syntax and React components. You can use any of our components, or even build your own.
+# Google Analytics (optional)
+NEXT_PUBLIC_GA_MEASUREMENT_ID=your_ga_id
 
-<CardGroup>
+# Typeform (optional)
+TYPEFORM_ACCESS_TOKEN=your_typeform_access_token
+TYPEFORM_VOTE_FORM_ID=your_vote_form_id
+TYPEFORM_SUGGESTION_FORM_ID=your_suggestion_form_id
 
-<Card title="Add Content With MDX" icon="file" href="/essentials/markdown">
-  Add content to your docs with MDX syntax.
-</Card>
+# Other Services (optional)
+# MONGODB_URI=your_mongodb_uri
+# RESEND_API_KEY=your_resend_api_key
+
+# Paddle Configuration
+PADDLE_SANDBOX=true
+PADDLE_API_KEY=your-api-key-here
+PADDLE_NOTIFICATION_WEBHOOK_SECRET=your-webhook-secret-here
+NEXT_PUBLIC_PADDLE_CLIENT_TOKEN=your-paddle-client-token-here
+```
+
+### 4. Start the Development Server
+
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+```
+
+Visit [http://localhost:3000](http://localhost:3000) to view your application.
+
+## Basic Configuration
+
+### Project Configuration
+
+Edit the `config.ts` file to change the application name, description, domain, and other basic information:
+
+```typescript
+const config = {
+  // REQUIRED
+  appName: "YourAppName",
+  // REQUIRED: Short description of your app for SEO tags
+  appDescription: "Your app description here",
+  // REQUIRED (no https://, no trailing slash, just the naked domain)
+  domainName: "yourdomain.com",
+  // Other configuration...
+}
+```
+
+### Customize Content
+
+Edit the translation files in the `locales/` directory to change the website text content:
+
+- `locales/en/` - English text
+- `locales/zh/` - Chinese text
+
+### Style Customization
+
+- Edit `tailwind.config.js` to customize colors, fonts, etc.
+- Edit `styles/globals.css` to add custom CSS
+
+## Deploying Your Project
+
+### Build for Production
+
+```bash
+npm run build
+# or
+yarn build
+# or
+pnpm build
+```
+
+### Deploy to Vercel
+
+PreLaunch can be deployed to Vercel with one click:
 
 <Card
-  title="Add Code Blocks"
-  icon="square-code"
-  href="/essentials/code"
+  title="Deploy to Vercel"
+  icon="rocket"
+  href="https://vercel.com/new/git/external?repository-url=https://github.com/your-repo/prelaunch"
 >
-  Add code directly to your docs with syntax highlighting.
+  Click to deploy to Vercel
 </Card>
+
+### Deploy to Netlify
+
+You can also easily deploy to Netlify:
 
 <Card
-  title="Add Images"
-  icon="image"
-  href="/essentials/images"
+  title="Deploy to Netlify"
+  icon="rocket"
+  href="https://app.netlify.com/start/deploy?repository=https://github.com/your-repo/prelaunch"
 >
-  Add images to your docs to make them more engaging.
+  Click to deploy to Netlify
 </Card>
 
-<Card
-  title="Add Custom Components"
-  icon="puzzle-piece"
-  href="/essentials/reusable-snippets"
->
-  Add templates to your docs to make them more reusable.
-</Card>
+## Next Steps
 
-</CardGroup>
+- [Configuration](/customization/configuration) - Learn how to configure your application
+- [Multi-language Support](/features/multilanguage) - How to add more languages
+- [Payment Integration](/features/payments) - Set up Paddle/Stripe payments

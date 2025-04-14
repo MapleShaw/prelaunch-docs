@@ -1,11 +1,11 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "PreLaunch",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#3b82f6",
+    "light": "#60a5fa",
+    "dark": "#2563eb"
   },
   "favicon": "/favicon.svg",
   "navigation": {
@@ -22,14 +22,42 @@
             ]
           },
           {
-            "group": "Essentials",
+            "group": "Core Features",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/settings",
-              "essentials/navigation",
-              "essentials/reusable-snippets"
+              "features/waitlist",
+              "features/voting",
+              "features/roadmap",
+              "features/multilanguage",
+              "features/payments"
+            ]
+          },
+          {
+            "group": "Customization",
+            "pages": [
+              "customization/configuration",
+              "customization/themes",
+              "customization/content"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "API",
+            "pages": [
+              "api/overview",
+              "api/authentication",
+              "api/waitlist"
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "integrations/paddle",
+              "integrations/resend",
+              "integrations/typeform"
             ]
           }
         ]
@@ -43,14 +71,9 @@
           "icon": "book-open-cover"
         },
         {
-          "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "GitHub",
+          "href": "https://github.com/your-repo/prelaunch",
+          "icon": "github"
         }
       ]
     }
@@ -68,8 +91,8 @@
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Get Started",
+      "href": "https://github.com/your-repo/prelaunch"
     }
   },
   "footer": {

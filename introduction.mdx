@@ -1,71 +1,110 @@
 ---
-title: Introduction
-description: "Welcome to the home of your new documentation"
+title: Introduction to PreLaunch
+description: "High-quality landing page template focused on product validation"
 ---
 
 <img
   className="block dark:hidden"
   src="/images/hero-light.png"
-  alt="Hero Light"
+  alt="PreLaunch Light"
 />
 <img
   className="hidden dark:block"
   src="/images/hero-dark.png"
-  alt="Hero Dark"
+  alt="PreLaunch Dark"
 />
 
-## Setting up
+## Welcome to PreLaunch
 
-The first step to world-class documentation is setting up your editing environments.
+PreLaunch is a high-quality startup landing page template focused on product validation, helping you quickly deploy professional websites, validate product ideas, and collect potential user feedback.
 
-<CardGroup cols={2}>
-  <Card
-    title="Edit Your Docs"
-    icon="pen-to-square"
-    href="https://mintlify.com/docs/quickstart"
-  >
-    Get your docs set up locally for easy development
-  </Card>
-  <Card
-    title="Preview Changes"
-    icon="image"
-    href="https://mintlify.com/docs/development"
-  >
-    Preview your changes before you push to make sure they're perfect
-  </Card>
-</CardGroup>
-
-## Make it yours
-
-Update your docs to your brand and add valuable content for the best user conversion.
+## Key Features
 
 <CardGroup cols={2}>
   <Card
-    title="Customize Style"
-    icon="palette"
-    href="https://mintlify.com/docs/settings/global"
+    title="Multi-language Support"
+    icon="language"
+    href="/features/multilanguage"
   >
-    Customize your docs to your company's colors and brands
+    Built-in English and Chinese support, easily extendable to other languages
   </Card>
   <Card
-    title="Reference APIs"
-    icon="code"
-    href="https://mintlify.com/docs/api-playground/openapi"
+    title="Waitlist Collection"
+    icon="list-check"
+    href="/features/waitlist"
   >
-    Automatically generate endpoints from an OpenAPI spec
+    Collect potential user emails to build a pre-launch user base
   </Card>
   <Card
-    title="Add Components"
-    icon="screwdriver-wrench"
-    href="https://mintlify.com/docs/content/components/accordions"
+    title="User Voting System"
+    icon="vote-yea"
+    href="/features/voting"
   >
-    Build interactive features and designs to guide your users
+    Let users vote for future features through Typeform integration
   </Card>
   <Card
-    title="Get Inspiration"
-    icon="stars"
-    href="https://mintlify.com/customers"
+    title="Roadmap Display"
+    icon="map"
+    href="/features/roadmap"
   >
-    Check out our showcase of our favorite documentation
+    Showcase product development plans and future features
+  </Card>
+  <Card
+    title="Payment Integration"
+    icon="credit-card"
+    href="/features/payments"
+  >
+    Integrated Paddle/Stripe payment systems
+  </Card>
+  <Card
+    title="Dark/Light Mode"
+    icon="moon"
+    href="/customization/themes"
+  >
+    Automatic and manual theme switching
   </Card>
 </CardGroup>
+
+## Technology Stack
+
+PreLaunch is built with a modern technology stack ensuring high performance and excellent developer experience:
+
+- **Frontend Framework**: [Next.js 14](https://nextjs.org/) (App Router)
+- **UI Frameworks**: 
+  - [Tailwind CSS](https://tailwindcss.com/)
+  - [DaisyUI](https://daisyui.com/)
+  - [Radix UI](https://www.radix-ui.com/)
+- **State Management**: React Hooks
+- **Form Handling**: [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
+- **Internationalization**: [next-intl](https://next-intl-docs.vercel.app/)
+- **API Integrations**:
+  - [Typeform](https://www.typeform.com/) - User voting and suggestion collection
+  - [Resend](https://resend.com/) - Email sending
+  - [Paddle/Stripe](https://paddle.com/) - Payment processing
+- **Authentication**: [NextAuth.js](https://next-auth.js.org/)
+- **Database**: MongoDB and Supabase
+- **Deployment**: Supports Vercel, Netlify, and other platforms
+
+## Project Structure
+
+```
+├── app/                  # Next.js App Router pages
+│   ├── api/              # API routes
+│   ├── dashboard/        # User dashboard
+│   ├── pricing/          # Pricing page
+│   └── ...               # Other pages
+├── components/           # React components
+│   ├── analytics/        # Analytics-related components
+│   ├── landing/          # Landing page components
+│   ├── ui/               # UI component library
+│   └── ...               # Other components
+├── libs/                 # Utility libraries
+│   ├── paddle/           # Paddle payment integration
+│   ├── supabase/         # Supabase client
+│   ├── stripe.ts         # Stripe payment integration
+│   └── ...               # Other function libraries
+├── locales/              # Internationalization translation files
+│   ├── en/               # English translations
+│   └── zh/               # Chinese translations
+└── models/               # Data models
+```

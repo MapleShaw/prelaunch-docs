@@ -1,0 +1,251 @@
+---
+title: 'API Overview'
+description: 'Overview and usage guide for PreLaunch API endpoints'
+---
+
+## API Introduction
+
+PreLaunch provides a series of API endpoints that allow you to programmatically interact with the application. These API endpoints are primarily implemented using Next.js API routes and follow a RESTful architecture.
+
+## API Paths
+
+All API endpoints are located under the `/api/` path, grouped by functionality:
+
+```
+/api/
+├── auth/               # Authentication-related endpoints
+├── waitlist/           # Waitlist-related endpoints
+├── paddle/             # Paddle payment-related endpoints
+└── typeform/           # Typeform integration-related endpoints
+```
+
+## Authentication Methods
+
+PreLaunch API supports the following authentication methods:
+
+### 1. Session-based Authentication
+
+Most API endpoints use session-based authentication, which is provided by NextAuth.js. When a user logs in, a session is created, and subsequent requests automatically include the session cookie.
+
+```typescript
+// Client-side request example
+const response = await fetch('/api/some-endpoint', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ data: 'value' }),
+});
+```
+
+### 2. API Key Authentication
+
+For server-to-server communication, PreLaunch supports API key authentication:
+
+```typescript
+// Example request using API key
+const response = await fetch('/api/some-endpoint', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${API_KEY}`,
+  },
+  body: JSON.stringify({ data: 'value' }),
+});
+```
+
+## Main API Endpoints
+
+### Waitlist API
+
+| Endpoint | Method | Description | Auth Required |
+| --- | --- | --- | --- |
+| `/api/waitlist/join` | POST | Add a user to the waitlist | No |
+| `/api/waitlist/list` | GET | Get the list of waitlist users | Yes (Admin) |
+
+Example request:
+
+```typescript
+// Join waitlist
+const response = await fetch('/api/waitlist/join', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    email: 'user@example.com',
+    name: 'User Name', // Optional
+    source: 'landing_page', // Optional
+  }),
+});
+```
+
+### Paddle Payment API
+
+| Endpoint | Method | Description | Auth Required |
+| --- | --- | --- | --- |
+| `/api/paddle/webhook` | POST | Paddle event webhook | Special verification |
+| `/api/paddle/customers` | GET | Get customer information | Yes |
+| `/api/paddle/transactions` | GET | Get transaction records | Yes |
+
+### User Authentication API
+
+| Endpoint | Method | Description | Auth Required |
+| --- | --- | --- | --- |
+| `/api/auth/signin` | POST | User login | No |
+| `/api/auth/signup` | POST | User registration | No |
+| `/api/auth/signout` | POST | User logout | Yes |
+
+## Request and Response Format
+
+All API requests and responses use JSON format.
+
+### Success Response
+
+Successful responses follow this format:
+
+```json
+{
+  "success": true,
+  "data": {
+    // Response data...
+  }
+}
+```
+
+### Error Response
+
+Error responses follow this format:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "ERROR_CODE",
+    "message": "Error description",
+    "details": {
+      // Optional error details...
+    }
+  }
+}
+```
+
+## Error Handling
+
+PreLaunch API uses standard HTTP status codes to represent request status:
+
+- `200 OK` - Request successful
+- `201 Created` - Resource created successfully
+- `400 Bad Request` - Request parameter error
+- `401 Unauthorized` - Authentication failed
+- `403 Forbidden` - Insufficient permissions
+- `404 Not Found` - Resource does not exist
+- `500 Internal Server Error` - Server error
+
+## Rate Limiting
+
+To prevent abuse, PreLaunch API implements basic rate limiting:
+
+- Maximum of 60 requests per minute per IP address
+- Some sensitive endpoints (like login) have stricter limits
+
+When exceeding the limit, the API will return a `429 Too Many Requests` status code.
+
+## API Usage Example
+
+Here's a basic example of using the PreLaunch API:
+
+### Joining the Waitlist
+
+```typescript
+async function joinWaitlist(email, name) {
+  try {
+    const response = await fetch('/api/waitlist/join', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, name }),
+    });
+    
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.error?.message || 'Unknown error');
+    }
+    
+    return data.data;
+  } catch (error) {
+    console.error('Failed to join waitlist:', error);
+    throw error;
+  }
+}
+```
+
+## Custom API Endpoints
+
+You can extend the PreLaunch API by creating new API routes:
+
+```typescript
+// pages/api/custom/endpoint.ts
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/libs/next-auth';
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  // Check authentication status
+  const session = await getServerSession(req, res, authOptions);
+  
+  if (!session) {
+    return res.status(401).json({
+      success: false,
+      error: {
+        code: 'UNAUTHORIZED',
+        message: 'Login required',
+      },
+    });
+  }
+  
+  // Handle request
+  if (req.method === 'GET') {
+    // Handle GET request
+    return res.status(200).json({
+      success: true,
+      data: {
+        message: 'Custom endpoint',
+      },
+    });
+  }
+  
+  // Unsupported method
+  return res.status(405).json({
+    success: false,
+    error: {
+      code: 'METHOD_NOT_ALLOWED',
+      message: 'Method not allowed',
+    },
+  });
+}
+```
+
+## Related Links
+
+<CardGroup cols={2}>
+  <Card
+    title="Authentication Documentation"
+    icon="lock"
+    href="/api/authentication"
+  >
+    Learn more about API authentication
+  </Card>
+  <Card
+    title="Waitlist API"
+    icon="list"
+    href="/api/waitlist"
+  >
+    Detailed documentation for the waitlist API
+  </Card>
+</CardGroup> 

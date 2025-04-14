@@ -1,0 +1,207 @@
+---
+title: 'Waitlist Feature'
+description: 'Collect potential user emails and build a pre-launch user base'
+---
+
+## Waitlist Feature Overview
+
+PreLaunch includes a powerful waitlist collection feature that helps you gather email addresses from potential users before your product officially launches, allowing you to build an initial user base. This feature offers:
+
+- Clean form design for high conversion rates
+- Email confirmation notifications
+- Prevention of duplicate submissions
+- Integration with MongoDB/Supabase databases
+- Customizable styles and messaging
+
+<img src="/images/waitlist-demo.png" alt="Waitlist Example" />
+
+## Implementation Methods
+
+PreLaunch's waitlist functionality can be implemented in two ways:
+
+### 1. Built-in Form
+
+Use the built-in form component to collect user emails:
+
+```tsx
+import { ButtonLead } from '@/components/ButtonLead';
+
+export default function HeroSection() {
+  return (
+    <div className="hero-section">
+      <h1>Your Product Name</h1>
+      <p>Short product description</p>
+      
+      {/* Waitlist button */}
+      <ButtonLead />
+    </div>
+  );
+}
+```
+
+### 2. Typeform Integration
+
+Collect richer user information through Typeform integration:
+
+```tsx
+import { TypeformWaitlist } from '@/components/landing/TypeformWaitlist';
+
+export default function HeroSection() {
+  return (
+    <div className="hero-section">
+      <h1>Your Product Name</h1>
+      <p>Short product description</p>
+      
+      {/* Typeform waitlist */}
+      <TypeformWaitlist />
+    </div>
+  );
+}
+```
+
+## Configuring the Waitlist
+
+### Basic Configuration
+
+1. Ensure the necessary environment variables are set in your `.env.local` file:
+
+```
+# Basic database connection (choose one)
+MONGODB_URI=your_mongodb_uri
+# or
+SUPABASE_URL=your_supabase_url
+SUPABASE_KEY=your_supabase_key
+
+# Email sending (optional, for confirmation emails)
+RESEND_API_KEY=your_resend_api_key
+```
+
+### Customizing the Waitlist Form
+
+You can customize the waitlist form by editing the `components/ButtonLead.tsx` file:
+
+```tsx
+// Customize button text
+<Button text="Join Waitlist" />
+
+// Customize success message
+<ButtonLead successMessage="Thanks for signing up! We'll be in touch soon." />
+
+// Customize styles
+<ButtonLead className="bg-blue-500 hover:bg-blue-600" />
+```
+
+### Using Typeform Integration
+
+If you prefer to collect more detailed user information using Typeform, follow these steps:
+
+1. Create a form on [Typeform](https://www.typeform.com/)
+2. Add your Typeform credentials to the `.env.local` file:
+
+```
+TYPEFORM_ACCESS_TOKEN=your_typeform_access_token
+TYPEFORM_WAITLIST_FORM_ID=your_waitlist_form_id
+```
+
+3. Use the `TypeformWaitlist` component instead of the default `ButtonLead` component
+
+## Data Storage
+
+User-submitted email addresses will be stored in your configured database:
+
+### MongoDB Schema
+
+If using MongoDB, data will be stored with the following schema:
+
+```typescript
+interface WaitlistUser {
+  email: string;
+  name?: string;
+  createdAt: Date;
+  source?: string;
+  metadata?: Record<string, any>;
+}
+```
+
+### Supabase Schema
+
+If using Supabase, data will be stored in a `waitlist` table with a structure similar to:
+
+```sql
+CREATE TABLE waitlist (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  email TEXT UNIQUE NOT NULL,
+  name TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  source TEXT,
+  metadata JSONB
+);
+```
+
+## User Confirmation Emails
+
+PreLaunch supports sending confirmation emails after users register for the waitlist. To enable this feature:
+
+1. Make sure `RESEND_API_KEY` is set in your `.env.local` file
+2. Edit the email template in `libs/resend.ts`
+
+The default email template is located in `components/emails/WaitlistConfirmation.tsx` and can be customized as needed.
+
+## Frequently Asked Questions
+
+<AccordionGroup>
+  <Accordion title="How do I export waitlist user data?">
+    You can export user data through database management tools (like MongoDB Compass or Supabase Console), or create an admin API to retrieve this data.
+  </Accordion>
+  <Accordion title="How do I modify the waitlist styling?">
+    You can customize the styling by editing the `ButtonLead.tsx` or `TypeformWaitlist.tsx` components, or by using Tailwind CSS classes to adjust the appearance.
+  </Accordion>
+  <Accordion title="Does the waitlist support multiple languages?">
+    Yes, all display text can be configured through the multi-language files at `locales/[lang]/common.json`.
+  </Accordion>
+</AccordionGroup>
+
+## Example Code
+
+Here's a complete example of a waitlist landing page:
+
+```tsx
+// app/page.tsx
+import { Hero } from '@/components/landing/Hero';
+import { Features } from '@/components/landing/Features';
+import { ButtonLead } from '@/components/ButtonLead';
+import { FAQ } from '@/components/landing/FAQ';
+
+export default function Home() {
+  return (
+    <main>
+      <Hero
+        title="Product Validation Landing Page"
+        subtitle="Quickly build professional websites, validate product ideas, and collect user feedback"
+        ctaComponent={<ButtonLead size="lg" />}
+      />
+      <Features />
+      <FAQ />
+    </main>
+  );
+}
+```
+
+## Related Links
+
+<CardGroup cols={2}>
+  <Card
+    title="Roadmap Feature"
+    icon="map"
+    href="/features/roadmap"
+  >
+    Learn how to showcase your product roadmap
+  </Card>
+  <Card
+    title="User Voting Feature"
+    icon="vote-yea"
+    href="/features/voting"
+  >
+    Allow users to vote for features
+  </Card>
+</CardGroup> 
