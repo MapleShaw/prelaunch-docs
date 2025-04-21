@@ -41,27 +41,6 @@
             ]
           }
         ]
-      },
-      {
-        "tab": "API Reference",
-        "groups": [
-          {
-            "group": "API",
-            "pages": [
-              "api/overview",
-              "api/authentication",
-              "api/waitlist"
-            ]
-          },
-          {
-            "group": "Integrations",
-            "pages": [
-              "integrations/paddle",
-              "integrations/resend",
-              "integrations/typeform"
-            ]
-          }
-        ]
       }
     ],
     "global": {
@@ -73,7 +52,7 @@
         },
         {
           "anchor": "GitHub",
-          "href": "https://github.com/your-repo/prelaunch",
+          "href": "https://github.com/MapleShaw/prelaunch",
           "icon": "github"
         }
       ]
@@ -93,7 +72,7 @@
     "primary": {
       "type": "button",
       "label": "Get Started",
-      "href": "https://github.com/your-repo/prelaunch"
+      "href": "https://github.com/MapleShaw/prelaunch"
     }
   },
   "footer": {
