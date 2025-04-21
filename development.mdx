@@ -1,107 +1,265 @@
 ---
-title: 'Development'
-description: 'Preview changes locally to update your docs'
+title: '开发指南'
+description: '如何设置和开发 PreLaunch 项目'
 ---
 
 <Info>
-  **Prerequisite**: Please install Node.js (version 19 or higher) before proceeding. <br />
-  Please upgrade to ```docs.json``` before proceeding and delete the legacy ```mint.json``` file.
+  **前提条件**: 请确保安装了 Node.js (版本 16 或更高) 以及 npm、yarn 或 pnpm。
 </Info>
 
-Follow these steps to install and run Mintlify on your operating system:
+## 项目技术栈
 
-**Step 1**: Install Mintlify:
+PreLaunch 使用以下核心技术:
 
-<CodeGroup>
+- **前端框架**: Next.js 14 (App Router)
+- **UI 框架**: Tailwind CSS、DaisyUI、Radix UI
+- **状态管理**: React Hooks
+- **表单处理**: React Hook Form + Zod
+- **国际化**: next-intl
+- **数据库**: Supabase (PostgreSQL)
+- **认证**: NextAuth.js
+- **支付处理**: Paddle/Stripe
 
-  ```bash npm
-  npm i -g mintlify
-  ```
+## 开发环境设置
 
-```bash yarn
-yarn global add mintlify
-```
+### 第 1 步: 克隆和安装
 
-</CodeGroup>
-
-**Step 2**: Navigate to the docs directory (where the `docs.json` file is located) and execute the following command:
-
-```bash
-mintlify dev
-```
-
-A local preview of your documentation will be available at `http://localhost:3000`.
-
-### Custom Ports
-
-By default, Mintlify uses port 3000. You can customize the port Mintlify runs on by using the `--port` flag. To run Mintlify on port 3333, for instance, use this command:
+克隆代码库并安装依赖项:
 
 ```bash
-mintlify dev --port 3333
+git clone https://github.com/MapleShaw/prelaunch.git
+cd prelaunch
+npm install
 ```
 
-If you attempt to run Mintlify on a port that's already in use, it will use the next available port:
+### 第 2 步: 环境配置
 
-```md
-Port 3000 is already in use. Trying 3001 instead.
-```
-
-## Mintlify Versions
-
-Please note that each CLI release is associated with a specific version of Mintlify. If your local website doesn't align with the production version, please update the CLI:
-
-<CodeGroup>
-
-```bash npm
-npm i -g mintlify@latest
-```
-
-```bash yarn
-yarn global upgrade mintlify
-```
-
-</CodeGroup>
-
-## Validating Links
-
-The CLI can assist with validating reference links made in your documentation. To identify any broken links, use the following command:
+复制 `.env.local.example` 文件到 `.env.local`:
 
 ```bash
-mintlify broken-links
+cp .env.local.example .env.local
 ```
 
-## Deployment
+在 `.env.local` 中配置必要的环境变量:
 
-<Tip>
-  Unlimited editors available under the [Pro
-  Plan](https://mintlify.com/pricing) and above.
-</Tip>
+```
+# 基本配置
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your_nextauth_secret
 
-If the deployment is successful, you should see the following:
+# Supabase 配置
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url-here
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key-here
+```
 
-<Frame>
-  <img src="/images/checks-passed.png" style={{ borderRadius: '0.5rem' }} />
-</Frame>
+### 第 3 步: 启动开发服务器
 
-## Code Formatting
+```bash
+npm run dev
+```
 
-We suggest using extensions on your IDE to recognize and format MDX. If you're a VSCode user, consider the [MDX VSCode extension](https://marketplace.visualstudio.com/items?itemName=unifiedjs.vscode-mdx) for syntax highlighting, and [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) for code formatting.
+项目将在 `http://localhost:3000` 启动。
 
-## Troubleshooting
+## Supabase 数据库配置
+
+PreLaunch 使用 Supabase 作为主要数据库来存储用户、产品和订阅数据。
+
+### 设置 Supabase
+
+1. 创建 [Supabase](https://supabase.com/) 账户
+2. 创建新项目
+3. 记下 URL 和匿名密钥，添加到 `.env.local` 文件中:
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=https://<your-project-id>.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+   ```
+
+### 数据库表结构
+
+PreLaunch 需要以下核心表:
+
+#### 用户等待列表表
+
+```sql
+create table
+  public.waitlist (
+    id uuid not null default uuid_generate_v4(),
+    email text not null,
+    name text null,
+    created_at timestamp with time zone not null default now(),
+    source text null,
+    constraint waitlist_pkey primary key (id),
+    constraint waitlist_email_key unique (email)
+  );
+```
+
+#### Paddle 客户表
+
+```sql
+create table
+  public.customers (
+    customer_id text not null,
+    email text not null,
+    created_at timestamp with time zone not null default now(),
+    updated_at timestamp with time zone not null default now(),
+    constraint customers_pkey primary key (customer_id)
+  );
+```
+
+#### 订阅表
+
+```sql
+create table
+  public.subscriptions (
+    subscription_id text not null,
+    subscription_status text not null,
+    price_id text null,
+    product_id text null,
+    scheduled_change text null,
+    customer_id text not null,
+    created_at timestamp with time zone not null default now(),
+    updated_at timestamp with time zone not null default now(),
+    constraint subscriptions_pkey primary key (subscription_id),
+    constraint public_subscriptions_customer_id_fkey foreign key (customer_id) references customers (customer_id)
+  );
+```
+
+## 使用 Supabase 客户端
+
+PreLaunch 包含了用于与 Supabase 交互的预配置客户端:
+
+```typescript
+// 在客户端使用
+import { createBrowserClient } from '@/libs/supabase';
+
+export default function Component() {
+  const supabase = createBrowserClient();
+  
+  async function fetchData() {
+    const { data, error } = await supabase
+      .from('waitlist')
+      .select('*');
+    
+    // 处理数据...
+  }
+  
+  // ...
+}
+```
+
+```typescript
+// 在服务器组件中使用
+import { createClient } from '@/libs/supabase';
+
+export default async function ServerComponent() {
+  const supabase = await createClient();
+  
+  const { data, error } = await supabase
+    .from('waitlist')
+    .select('*');
+  
+  // 处理数据...
+}
+```
+
+## 认证配置
+
+PreLaunch 使用 NextAuth.js 进行用户认证。配置在 `libs/next-auth.ts` 文件中。
+
+支持多种认证方式:
+- 电子邮件/密码认证
+- Google OAuth
+- GitHub OAuth
+
+## 支付集成
+
+### Paddle 配置
+
+1. 创建 [Paddle](https://paddle.com/) 账户
+2. 在 `.env.local` 文件中配置 Paddle 环境变量:
+   ```
+   PADDLE_SANDBOX=true
+   PADDLE_API_KEY=your-api-key-here
+   PADDLE_NOTIFICATION_WEBHOOK_SECRET=your-webhook-secret-here
+   NEXT_PUBLIC_PADDLE_CLIENT_TOKEN=your-paddle-client-token-here
+   ```
+
+### Typeform 集成
+
+1. 创建 [Typeform](https://www.typeform.com/) 账户
+2. 配置相关环境变量:
+   ```
+   TYPEFORM_ACCESS_TOKEN=your_typeform_access_token
+   TYPEFORM_VOTE_FORM_ID=your_vote_form_id
+   TYPEFORM_SUGGESTION_FORM_ID=your_suggestion_form_id
+   ```
+
+## 问题排查
 
 <AccordionGroup>
-  <Accordion title='Error: Could not load the "sharp" module using the darwin-arm64 runtime'>
-
-    This may be due to an outdated version of node. Try the following:
-    1. Remove the currently-installed version of mintlify: `npm remove -g mintlify`
-    2. Upgrade to Node v19 or higher.
-    3. Reinstall mintlify: `npm install -g mintlify`
+  <Accordion title='Next.js 热重载失效'>
+    尝试清除 `.next` 文件夹并重启开发服务器:
+    ```bash
+    rm -rf .next
+    npm run dev
+    ```
   </Accordion>
 
-  <Accordion title="Issue: Encountering an unknown error">
+  <Accordion title='Supabase 连接错误'>
+    检查 Supabase URL 和密钥是否正确。确保您的 IP 地址未被 Supabase 阻止，并确认数据库表是否已正确创建。
+  </Accordion>
   
-    Solution: Go to the root of your device and delete the \~/.mintlify folder. Afterwards, run `mintlify dev` again.
+  <Accordion title='国际化问题'>
+    如果国际化不起作用，检查 `middleware.ts` 文件和 `app/[locale]` 目录结构是否正确。
   </Accordion>
 </AccordionGroup>
 
-Curious about what changed in the CLI version? [Check out the CLI changelog.](https://www.npmjs.com/package/mintlify?activeTab=versions)
+## 部署
+
+### Vercel 部署
+
+1. 将代码推送到 GitHub 仓库
+2. 在 [Vercel](https://vercel.com/) 上创建新项目
+3. 导入您的 GitHub 仓库
+4. 添加必要的环境变量
+5. 点击部署
+
+### 其他平台
+
+PreLaunch 也可以部署到 Netlify、Railway 或任何支持 Next.js 的主机。请确保设置所有必要的环境变量。
+
+## 常见开发任务
+
+### 添加新页面
+
+在 `app/[locale]` 目录下添加新目录和页面组件:
+
+```tsx
+// app/[locale]/new-page/page.tsx
+export default function NewPage() {
+  return (
+    <div>
+      <h1>新页面</h1>
+      <p>这是一个新页面的内容</p>
+    </div>
+  );
+}
+```
+
+### 添加新翻译
+
+在 `locales/{语言}` 目录下的相应文件中添加新的翻译键:
+
+```json
+// locales/zh/common.json
+{
+  "newKey": "新的翻译文本"
+}
+```
+
+```json
+// locales/en/common.json
+{
+  "newKey": "New translation text"
+}
+```

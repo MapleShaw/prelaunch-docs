@@ -5,23 +5,20 @@ description: 'Accept payments and manage subscriptions with PreLaunch'
 
 ## Payments Feature Overview
 
-PreLaunch comes with comprehensive payment capabilities, allowing you to monetize your product even during the pre-launch phase. The template includes integrations with both Paddle and Stripe, two of the most popular payment processors, giving you flexibility in how you handle transactions.
+PreLaunch comes with comprehensive payment capabilities, allowing you to monetize your product even during the pre-launch phase. The template includes integration with Paddle, giving you a powerful system to handle transactions.
 
 <img src="/images/payments-demo.png" alt="Payments Feature Example" />
 
 ## Key Features
 
-- **Multiple Payment Providers**: Support for both Paddle and Stripe payment processors
-- **One-time & Subscription Payments**: Handle both single purchases and recurring subscriptions
+- **Payment Processing**: Support for both one-time purchases and recurring subscriptions
 - **Customizable Pricing Plans**: Create and display different pricing tiers
 - **Checkout Flow**: Streamlined checkout experience for customers
 - **Customer Management**: View and manage customer information and subscriptions
 - **Webhook Integration**: Automatically handle payment events
 - **Mobile-Responsive Design**: Payment flows work on all devices
 
-## Supported Payment Processors
-
-### Paddle Integration
+## Paddle Integration
 
 PreLaunch includes a comprehensive integration with Paddle, which is particularly well-suited for SaaS businesses:
 
@@ -32,16 +29,6 @@ PreLaunch includes a comprehensive integration with Paddle, which is particularl
   - Lower setup complexity
 
 [Learn more about Paddle integration](/features/payments/paddle-integration)
-
-### Stripe Integration
-
-PreLaunch also supports Stripe, which offers more customization options:
-
-- **Advantages**:
-  - Highly customizable checkout flow
-  - Extensive API options
-  - Support for many different payment methods
-  - Popular in the US market
 
 ## Implementing a Pricing Page
 
@@ -104,7 +91,7 @@ paddle: {
 
 ## Checkout Components
 
-PreLaunch provides pre-built checkout buttons for both Paddle and Stripe:
+PreLaunch provides pre-built checkout buttons for Paddle:
 
 ### Paddle Checkout Button
 
@@ -123,28 +110,6 @@ export default function PricingCard() {
       </ul>
       
       <ButtonCheckout priceId="pri_xxxxxxxxxxxxxxxx" />
-    </div>
-  );
-}
-```
-
-### Stripe Checkout Button
-
-```tsx
-import { ButtonStripeCheckout } from '@/components/ButtonStripeCheckout';
-
-export default function PricingCard() {
-  return (
-    <div className="pricing-card">
-      <h3>Pro Plan</h3>
-      <p className="price">$79/month</p>
-      <ul>
-        <li>Feature 1</li>
-        <li>Feature 2</li>
-        <li>Feature 3</li>
-      </ul>
-      
-      <ButtonStripeCheckout priceId="price_xxxxxxxxxxxxxxxx" />
     </div>
   );
 }
@@ -187,15 +152,6 @@ PADDLE_NOTIFICATION_WEBHOOK_SECRET=your-webhook-secret-here
 NEXT_PUBLIC_PADDLE_CLIENT_TOKEN=your-paddle-client-token-here
 ```
 
-### For Stripe:
-
-```
-# Stripe Configuration
-STRIPE_PUBLIC_KEY=pk_test_xxxxx
-STRIPE_SECRET_KEY=sk_test_xxxxx
-STRIPE_WEBHOOK_SECRET=whsec_xxxxx
-```
-
 ## Best Practices for Payment Implementation
 
 - **Test Thoroughly**: Always test the checkout flow in sandbox/test mode before going live
@@ -208,10 +164,10 @@ STRIPE_WEBHOOK_SECRET=whsec_xxxxx
 
 <AccordionGroup>
   <Accordion title="Checkout button not working">
-    Ensure that your environment variables are correctly set up, including the client token for Paddle or the public key for Stripe. Check your browser console for any errors.
+    Ensure that your environment variables are correctly set up, including the client token for Paddle. Check your browser console for any errors.
   </Accordion>
   <Accordion title="Webhooks not receiving events">
-    Verify that your webhook URLs are correctly configured in your Paddle/Stripe dashboard and that your webhook secrets match what's in your environment variables.
+    Verify that your webhook URLs are correctly configured in your Paddle dashboard and that your webhook secrets match what's in your environment variables.
   </Accordion>
   <Accordion title="Customer portal not loading">
     Check that the user is authenticated and has an active subscription. Verify that the correct customer ID is being passed to the portal component.
