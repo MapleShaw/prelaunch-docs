@@ -50,6 +50,13 @@ PreLaunch is a high-quality startup landing page template focused on product val
     Showcase product development plans and future features
   </Card>
   <Card
+    title="Blog System"
+    icon="newspaper"
+    href="/features/blog"
+  >
+    Content marketing with fully featured blog functionality
+  </Card>
+  <Card
     title="Payment Integration"
     icon="credit-card"
     href="/features/payments"
@@ -90,6 +97,7 @@ PreLaunch is built with a modern technology stack ensuring high performance and 
 ```
 ├── app/                  # Next.js App Router pages
 │   ├── api/              # API routes
+│   ├── blog/             # Blog pages and content
 │   ├── dashboard/        # User dashboard
 │   ├── pricing/          # Pricing page
 │   └── ...               # Other pages
@@ -106,5 +114,11 @@ PreLaunch is built with a modern technology stack ensuring high performance and 
 ├── locales/              # Internationalization translation files
 │   ├── en/               # English translations
 │   └── zh/               # Chinese translations
-└── models/               # Data models
+├── public/               # Static assets
+│   ├── avatars/          # User avatars
+│   ├── blog/             # Blog images
+│   └── images/           # Other images and assets
+├── styles/               # Global styles
+├── hooks/                # Custom React hooks
+└── types/                # TypeScript type definitions
 ```

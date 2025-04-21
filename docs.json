@@ -27,6 +27,7 @@
               "features/waitlist",
               "features/voting",
               "features/roadmap",
+              "features/blog",
               "features/multilanguage",
               "features/payments"
             ]
