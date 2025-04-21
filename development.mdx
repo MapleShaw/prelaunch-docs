@@ -1,30 +1,30 @@
 ---
-title: '开发指南'
-description: '如何设置和开发 PreLaunch 项目'
+title: 'Development'
+description: 'How to set up and develop the PreLaunch project'
 ---
 
 <Info>
-  **前提条件**: 请确保安装了 Node.js (版本 16 或更高) 以及 npm、yarn 或 pnpm。
+  **Prerequisite**: Please install Node.js (version 16 or higher) and npm, yarn, or pnpm.
 </Info>
 
-## 项目技术栈
+## Technology Stack
 
-PreLaunch 使用以下核心技术:
+PreLaunch is built with the following core technologies:
 
-- **前端框架**: Next.js 14 (App Router)
-- **UI 框架**: Tailwind CSS、DaisyUI、Radix UI
-- **状态管理**: React Hooks
-- **表单处理**: React Hook Form + Zod
-- **国际化**: next-intl
-- **数据库**: Supabase (PostgreSQL)
-- **认证**: NextAuth.js
-- **支付处理**: Paddle/Stripe
+- **Frontend Framework**: Next.js 14 (App Router)
+- **UI Frameworks**: Tailwind CSS, DaisyUI, Radix UI
+- **State Management**: React Hooks
+- **Form Handling**: React Hook Form + Zod
+- **Internationalization**: next-intl
+- **Database**: Supabase (PostgreSQL)
+- **Authentication**: NextAuth.js
+- **Payment Processing**: Paddle
 
-## 开发环境设置
+## Development Environment Setup
 
-### 第 1 步: 克隆和安装
+### Step 1: Clone and Install
 
-克隆代码库并安装依赖项:
+Clone the repository and install dependencies:
 
 ```bash
 git clone https://github.com/MapleShaw/prelaunch.git
@@ -32,53 +32,53 @@ cd prelaunch
 npm install
 ```
 
-### 第 2 步: 环境配置
+### Step 2: Environment Configuration
 
-复制 `.env.local.example` 文件到 `.env.local`:
+Copy the `.env.local.example` file to `.env.local`:
 
 ```bash
 cp .env.local.example .env.local
 ```
 
-在 `.env.local` 中配置必要的环境变量:
+Configure necessary environment variables in `.env.local`:
 
 ```
-# 基本配置
+# Basic configuration
 NEXTAUTH_URL=http://localhost:3000
 NEXTAUTH_SECRET=your_nextauth_secret
 
-# Supabase 配置
+# Supabase configuration
 NEXT_PUBLIC_SUPABASE_URL=your-supabase-url-here
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key-here
 ```
 
-### 第 3 步: 启动开发服务器
+### Step 3: Start Development Server
 
 ```bash
 npm run dev
 ```
 
-项目将在 `http://localhost:3000` 启动。
+The project will be available at `http://localhost:3000`.
 
-## Supabase 数据库配置
+## Supabase Database Configuration
 
-PreLaunch 使用 Supabase 作为主要数据库来存储用户、产品和订阅数据。
+PreLaunch uses Supabase as the primary database for storing users, products, and subscription data.
 
-### 设置 Supabase
+### Setting Up Supabase
 
-1. 创建 [Supabase](https://supabase.com/) 账户
-2. 创建新项目
-3. 记下 URL 和匿名密钥，添加到 `.env.local` 文件中:
+1. Create a [Supabase](https://supabase.com/) account
+2. Create a new project
+3. Note down the URL and anonymous key, add them to your `.env.local` file:
    ```
    NEXT_PUBLIC_SUPABASE_URL=https://<your-project-id>.supabase.co
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
    ```
 
-### 数据库表结构
+### Core Database Tables
 
-PreLaunch 需要以下核心表:
+PreLaunch requires the following core tables:
 
-#### 用户等待列表表
+#### Waitlist Table
 
 ```sql
 create table
@@ -93,7 +93,7 @@ create table
   );
 ```
 
-#### Paddle 客户表
+#### Paddle Customers Table
 
 ```sql
 create table
@@ -106,7 +106,7 @@ create table
   );
 ```
 
-#### 订阅表
+#### Subscriptions Table
 
 ```sql
 create table
@@ -124,12 +124,12 @@ create table
   );
 ```
 
-## 使用 Supabase 客户端
+## Using Supabase Client
 
-PreLaunch 包含了用于与 Supabase 交互的预配置客户端:
+PreLaunch includes preconfigured clients for interacting with Supabase:
 
 ```typescript
-// 在客户端使用
+// In client-side components
 import { createBrowserClient } from '@/libs/supabase';
 
 export default function Component() {
@@ -140,7 +140,7 @@ export default function Component() {
       .from('waitlist')
       .select('*');
     
-    // 处理数据...
+    // Process data...
   }
   
   // ...
@@ -148,7 +148,7 @@ export default function Component() {
 ```
 
 ```typescript
-// 在服务器组件中使用
+// In server components
 import { createClient } from '@/libs/supabase';
 
 export default async function ServerComponent() {
@@ -158,25 +158,25 @@ export default async function ServerComponent() {
     .from('waitlist')
     .select('*');
   
-  // 处理数据...
+  // Process data...
 }
 ```
 
-## 认证配置
+## Authentication Configuration
 
-PreLaunch 使用 NextAuth.js 进行用户认证。配置在 `libs/next-auth.ts` 文件中。
+PreLaunch uses NextAuth.js for user authentication. The configuration is in the `libs/next-auth.ts` file.
 
-支持多种认证方式:
-- 电子邮件/密码认证
+Multiple authentication methods are supported:
+- Email/password authentication
 - Google OAuth
 - GitHub OAuth
 
-## 支付集成
+## Payment Integration
 
-### Paddle 配置
+### Paddle Configuration
 
-1. 创建 [Paddle](https://paddle.com/) 账户
-2. 在 `.env.local` 文件中配置 Paddle 环境变量:
+1. Create a [Paddle](https://paddle.com/) account
+2. Configure Paddle environment variables in your `.env.local` file:
    ```
    PADDLE_SANDBOX=true
    PADDLE_API_KEY=your-api-key-here
@@ -184,82 +184,115 @@ PreLaunch 使用 NextAuth.js 进行用户认证。配置在 `libs/next-auth.ts` 
    NEXT_PUBLIC_PADDLE_CLIENT_TOKEN=your-paddle-client-token-here
    ```
 
-### Typeform 集成
+### Typeform Integration
 
-1. 创建 [Typeform](https://www.typeform.com/) 账户
-2. 配置相关环境变量:
+1. Create a [Typeform](https://www.typeform.com/) account
+2. Configure related environment variables:
    ```
    TYPEFORM_ACCESS_TOKEN=your_typeform_access_token
    TYPEFORM_VOTE_FORM_ID=your_vote_form_id
    TYPEFORM_SUGGESTION_FORM_ID=your_suggestion_form_id
    ```
 
-## 问题排查
+## Project Structure
+
+```
+├── app/                  # Next.js App Router pages
+│   ├── api/              # API routes
+│   ├── blog/             # Blog pages and content
+│   ├── dashboard/        # User dashboard
+│   ├── pricing/          # Pricing page
+│   ├── checkout/         # Checkout flow
+│   └── ...               # Other pages
+├── components/           # React components
+│   ├── analytics/        # Analytics-related components
+│   ├── landing/          # Landing page components
+│   ├── ui/               # UI component library
+│   ├── checkout/         # Checkout components
+│   ├── emails/           # Email template components
+│   └── ...               # Other components
+├── libs/                 # Utility libraries
+│   ├── paddle/           # Paddle payment integration
+│   ├── supabase/         # Supabase client and functionalities
+│   ├── next-auth.ts      # NextAuth configuration
+│   ├── resend.ts         # Email sending functionality
+│   └── ...               # Other function libraries
+├── locales/              # Internationalization translation files
+│   ├── en/               # English translations
+│   └── zh/               # Chinese translations
+├── models/               # Data models
+├── public/               # Static assets
+├── styles/               # Global styles
+├── hooks/                # Custom React hooks
+└── types/                # TypeScript type definitions
+```
+
+## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title='Next.js 热重载失效'>
-    尝试清除 `.next` 文件夹并重启开发服务器:
+  <Accordion title='Next.js Hot Reload Not Working'>
+    Try clearing the `.next` folder and restarting the development server:
     ```bash
     rm -rf .next
     npm run dev
     ```
   </Accordion>
 
-  <Accordion title='Supabase 连接错误'>
-    检查 Supabase URL 和密钥是否正确。确保您的 IP 地址未被 Supabase 阻止，并确认数据库表是否已正确创建。
+  <Accordion title='Supabase Connection Errors'>
+    Check that your Supabase URL and key are correct. Make sure your IP address is not blocked by Supabase and that the database tables are correctly created.
   </Accordion>
   
-  <Accordion title='国际化问题'>
-    如果国际化不起作用，检查 `middleware.ts` 文件和 `app/[locale]` 目录结构是否正确。
+  <Accordion title='Internationalization Issues'>
+    If internationalization is not working, check the `middleware.ts` file and the `app/[locale]` directory structure.
   </Accordion>
 </AccordionGroup>
 
-## 部署
+## Deployment
 
-### Vercel 部署
+### Vercel Deployment
 
-1. 将代码推送到 GitHub 仓库
-2. 在 [Vercel](https://vercel.com/) 上创建新项目
-3. 导入您的 GitHub 仓库
-4. 添加必要的环境变量
-5. 点击部署
+1. Push your code to a GitHub repository
+2. Create a new project on [Vercel](https://vercel.com/)
+3. Import your GitHub repository
+4. Add the necessary environment variables
+5. Click deploy
 
-### 其他平台
+### Other Platforms
 
-PreLaunch 也可以部署到 Netlify、Railway 或任何支持 Next.js 的主机。请确保设置所有必要的环境变量。
+PreLaunch can also be deployed to Netlify, Railway, or any other host that supports Next.js. Make sure to set all the necessary environment variables.
 
-## 常见开发任务
+## Common Development Tasks
 
-### 添加新页面
+### Adding a New Page
 
-在 `app/[locale]` 目录下添加新目录和页面组件:
+Add a new directory and page component in the `app/[locale]` directory:
 
 ```tsx
 // app/[locale]/new-page/page.tsx
 export default function NewPage() {
   return (
     <div>
-      <h1>新页面</h1>
-      <p>这是一个新页面的内容</p>
+      <h1>New Page</h1>
+      <p>This is the content of a new page</p>
     </div>
   );
 }
 ```
 
-### 添加新翻译
+### Adding New Translations
 
-在 `locales/{语言}` 目录下的相应文件中添加新的翻译键:
-
-```json
-// locales/zh/common.json
-{
-  "newKey": "新的翻译文本"
-}
-```
+Add new translation keys in the appropriate files in the `locales/{language}` directory:
 
 ```json
 // locales/en/common.json
 {
   "newKey": "New translation text"
+}
+```
+
+```json
+// locales/zh/common.json
+{
+  "newKey": "新的翻译文本"
 }
 ```
