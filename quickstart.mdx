@@ -37,27 +37,37 @@ cp .env.local.example .env.local
 Key environment variables:
 
 ```
-# Basic Configuration
+# Basic configuration
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXTAUTH_SECRET=any_random_text
 NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your_nextauth_secret
 
-# Google Analytics (optional)
-NEXT_PUBLIC_GA_MEASUREMENT_ID=your_ga_id
+# Authentication providers
+## Google
+GOOGLE_ID=your_client_id
+GOOGLE_SECRET=your_client_secret
 
-# Typeform (optional)
-TYPEFORM_ACCESS_TOKEN=your_typeform_access_token
-TYPEFORM_VOTE_FORM_ID=your_vote_form_id
-TYPEFORM_SUGGESTION_FORM_ID=your_suggestion_form_id
+# Resend - Email service
+RESEND_API_KEY=your_resend_api_key
 
-# Other Services (optional)
-# MONGODB_URI=your_mongodb_uri
-# RESEND_API_KEY=your_resend_api_key
-
-# Paddle Configuration
-PADDLE_SANDBOX=true
+# Paddle Billing configuration
 PADDLE_API_KEY=your-api-key-here
-PADDLE_NOTIFICATION_WEBHOOK_SECRET=your-webhook-secret-here
 NEXT_PUBLIC_PADDLE_CLIENT_TOKEN=your-paddle-client-token-here
+PADDLE_NOTIFICATION_WEBHOOK_SECRET=your-webhook-secret-here
+NEXT_PUBLIC_PADDLE_ENV=sandbox # or production
+
+# Supabase configuration
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url-here
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key-here
+
+# Typeform configuration
+NEXT_PUBLIC_TYPEFORM_VOTE_ID=your-typeform-vote-id
+NEXT_PUBLIC_TYPEFORM_SUGGESTION_ID=your-typeform-suggestion-id
+TYPEFORM_ACCESS_TOKEN=your-typeform-access-token
+TYPEFORM_VOTE_FORM_ID=your-typeform-vote-form-id
+
+# Google Analytics
+NEXT_PUBLIC_GA_MEASUREMENT_ID=your-ga-measurement-id
 ```
 
 ### 4. Start the Development Server
@@ -92,10 +102,9 @@ const config = {
 
 ### Customize Content
 
-Edit the translation files in the `locales/` directory to change the website text content:
+The project currently uses static content. You can directly modify the components to change text content.
 
-- `locales/en/` - English text
-- `locales/zh/` - Chinese text
+Although the project structure still includes the `locales/` directory, the internationalization feature has been removed in the latest version. If you need multi-language support, you'll need to use Next.js's built-in internationalization features or add a third-party library.
 
 ### Style Customization
 
@@ -138,8 +147,25 @@ You can also easily deploy to Netlify:
   Click to deploy to Netlify
 </Card>
 
+## Technology Stack
+
+PreLaunch uses the following technologies:
+
+- **Frontend Framework**: [Next.js 14](https://nextjs.org/) (App Router)
+- **UI Frameworks**: 
+  - [Tailwind CSS](https://tailwindcss.com/)
+  - [DaisyUI](https://daisyui.com/)
+  - [Radix UI](https://www.radix-ui.com/)
+- **State Management**: React Hooks
+- **Form Handling**: [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
+- **API Integrations**:
+  - [Typeform](https://www.typeform.com/) - User voting and suggestion collection
+  - [Resend](https://resend.com/) - Email sending
+  - [Paddle](https://paddle.com/) - Payment processing and subscription management
+- **Authentication**: [NextAuth.js](https://next-auth.js.org/)
+- **Database**: [Supabase](https://supabase.com/) (PostgreSQL)
+
 ## Next Steps
 
 - [Configuration](/customization/configuration) - Learn how to configure your application
-- [Multi-language Support](/features/multilanguage) - How to add more languages
-- [Payment Integration](/features/payments) - Set up Paddle/Stripe payments
+- [Payment Integration](/features/payments) - Set up Paddle payments

@@ -74,18 +74,6 @@ paddle: {
 
 Configure your pricing plans, features, and Paddle price IDs here. Each plan should have a unique ID and a valid Paddle price ID.
 
-### AWS Configuration (Optional)
-
-```typescript
-aws: {
-  // If you use AWS S3/Cloudfront, put values in here
-  bucket: "bucket-name",
-  bucketUrl: `https://bucket-name.s3.amazonaws.com/`,
-  cdn: "https://cdn-id.cloudfront.net/",
-},
-```
-
-If you use AWS S3 for file storage and CloudFront for CDN, configure your bucket and CDN URLs here.
 
 ### Email Configuration (Resend)
 
@@ -198,14 +186,14 @@ export interface ConfigProps {
 <CardGroup cols={2}>
   <Card
     title="Theme Customization"
-    icon="paint-brush"
+    icon="paintbrush"
     href="/customization/themes"
   >
     Learn how to customize the visual appearance of your application
   </Card>
   <Card
     title="Content Customization"
-    icon="file-alt"
+    icon="file"
     href="/customization/content"
   >
     Learn how to modify the text and content of your application

@@ -7,24 +7,21 @@ description: 'Collect potential user emails and build a pre-launch user base'
 
 PreLaunch includes a powerful waitlist collection feature that helps you gather email addresses from potential users before your product officially launches, allowing you to build an initial user base. This feature offers:
 
-- Clean form design for high conversion rates
-- Email confirmation notifications
+- Clean, conversion-optimized form design
+- Email confirmation notifications through Resend
 - Prevention of duplicate submissions
-- Integration with MongoDB/Supabase databases
+- Integration with Supabase database
+- Analytics tracking
 - Customizable styles and messaging
 
 <img src="/images/waitlist-demo.png" alt="Waitlist Example" />
 
 ## Implementation Methods
 
-PreLaunch's waitlist functionality can be implemented in two ways:
-
-### 1. Built-in Form
-
-Use the built-in form component to collect user emails:
+PreLaunch's waitlist functionality is implemented using the TypeformWaitlist component:
 
 ```tsx
-import { ButtonLead } from '@/components/ButtonLead';
+import TypeformWaitlist from '@/components/landing/TypeformWaitlist';
 
 export default function HeroSection() {
   return (
@@ -32,28 +29,22 @@ export default function HeroSection() {
       <h1>Your Product Name</h1>
       <p>Short product description</p>
       
-      {/* Waitlist button */}
-      <ButtonLead />
-    </div>
-  );
-}
-```
-
-### 2. Typeform Integration
-
-Collect richer user information through Typeform integration:
-
-```tsx
-import { TypeformWaitlist } from '@/components/landing/TypeformWaitlist';
-
-export default function HeroSection() {
-  return (
-    <div className="hero-section">
-      <h1>Your Product Name</h1>
-      <p>Short product description</p>
+      {/* Reference to waitlist section */}
+      <Button 
+        onClick={() => {
+          const waitlistSection = document.getElementById('waitlist');
+          if (waitlistSection) {
+            waitlistSection.scrollIntoView({ behavior: 'smooth' });
+          }
+        }}
+      >
+        Join Waitlist
+      </Button>
       
-      {/* Typeform waitlist */}
-      <TypeformWaitlist />
+      {/* Waitlist component with ID for scrolling */}
+      <div id="waitlist">
+        <TypeformWaitlist />
+      </div>
     </div>
   );
 }
@@ -66,98 +57,168 @@ export default function HeroSection() {
 1. Ensure the necessary environment variables are set in your `.env.local` file:
 
 ```
-# Basic database connection (choose one)
-MONGODB_URI=your_mongodb_uri
-# or
-SUPABASE_URL=your_supabase_url
-SUPABASE_KEY=your_supabase_key
+# Supabase configuration
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url-here
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key-here
 
-# Email sending (optional, for confirmation emails)
+# Email sending (for confirmation emails)
 RESEND_API_KEY=your_resend_api_key
+RESEND_AUDIENCE_ID=your_resend_audience_id
 ```
 
 ### Customizing the Waitlist Form
 
-You can customize the waitlist form by editing the `components/ButtonLead.tsx` file:
+You can customize the waitlist form by editing the `components/landing/TypeformWaitlist.tsx` component:
 
 ```tsx
-// Customize button text
-<Button text="Join Waitlist" />
-
-// Customize success message
-<ButtonLead successMessage="Thanks for signing up! We'll be in touch soon." />
-
-// Customize styles
-<ButtonLead className="bg-blue-500 hover:bg-blue-600" />
+// Customize the component appearance
+<div 
+  id="waitlist" 
+  className="relative bg-white/80 dark:bg-gray-900/80 backdrop-blur-md rounded-2xl shadow-xl border border-gray-200/80 dark:border-gray-800/80 p-6 md:p-8 transition-all hover:shadow-2xl"
+>
+  {/* Customize content */}
+  <h3 className="text-xl md:text-2xl font-bold mb-2">
+    Join the Waitlist
+  </h3>
+  
+  {/* Customize description */}
+  <p className="text-gray-600 dark:text-gray-400 mb-6">
+    Join our waitlist to be among the first to experience our product when it launches.
+  </p>
+  
+  {/* Form implementation... */}
+</div>
 ```
 
-### Using Typeform Integration
-
-If you prefer to collect more detailed user information using Typeform, follow these steps:
-
-1. Create a form on [Typeform](https://www.typeform.com/)
-2. Add your Typeform credentials to the `.env.local` file:
-
-```
-TYPEFORM_ACCESS_TOKEN=your_typeform_access_token
-TYPEFORM_WAITLIST_FORM_ID=your_waitlist_form_id
-```
-
-3. Use the `TypeformWaitlist` component instead of the default `ButtonLead` component
+You can also customize the waitlist confirmation messages in the form component or in the translation files.
 
 ## Data Storage
 
-User-submitted email addresses will be stored in your configured database:
-
-### MongoDB Schema
-
-If using MongoDB, data will be stored with the following schema:
-
-```typescript
-interface WaitlistUser {
-  email: string;
-  name?: string;
-  createdAt: Date;
-  source?: string;
-  metadata?: Record<string, any>;
-}
-```
+User-submitted email addresses are stored in your Supabase database:
 
 ### Supabase Schema
 
-If using Supabase, data will be stored in a `waitlist` table with a structure similar to:
+The waitlist data is stored in a `waitlist` table with the following structure:
 
 ```sql
-CREATE TABLE waitlist (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  email TEXT UNIQUE NOT NULL,
-  name TEXT,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  source TEXT,
-  metadata JSONB
-);
+create table if not exists
+  public.waitlist (
+    id uuid not null default uuid_generate_v4(),
+    email text not null unique,
+    locale text not null default 'en',
+    source text null,
+    created_at timestamp with time zone not null default now(),
+    constraint waitlist_pkey primary key (id)
+  );
+```
+
+## Backend Implementation
+
+The waitlist feature uses a dedicated API endpoint for handling submissions:
+
+```typescript
+// app/api/subscribe/route.ts
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { email } = body;
+
+    // Check if email already exists
+    const emailExists = await isEmailInWaitlist(email);
+    if (emailExists) {
+      return NextResponse.json(
+        { 
+          success: true, 
+          alreadyExists: true,
+          message: "Email already registered in waitlist" 
+        }
+      );
+    }
+
+    // Add to Supabase waitlist
+    const result = await addToWaitlist({ 
+      email,
+      locale,
+      source: "website"
+    });
+    
+    // Track signup for analytics
+    trackWaitlistSignup(email);
+    
+    // Send confirmation email
+    await sendWaitlistConfirmationEmail({
+      email,
+      locale
+    });
+    
+    // Return success response
+    return NextResponse.json({ 
+      success: true,
+      message: "Successfully joined the waitlist"
+    });
+  }
+  catch (error) {
+    // Handle errors
+    return NextResponse.json(
+      { success: false, error: "Submission failed" },
+      { status: 500 }
+    );
+  }
+}
 ```
 
 ## User Confirmation Emails
 
-PreLaunch supports sending confirmation emails after users register for the waitlist. To enable this feature:
+PreLaunch sends confirmation emails after users register for the waitlist using Resend:
 
-1. Make sure `RESEND_API_KEY` is set in your `.env.local` file
-2. Edit the email template in `libs/resend.ts`
+```typescript
+// libs/resend.ts
+export const sendWaitlistConfirmationEmail = async ({
+  email,
+  locale = 'en',
+}: {
+  email: string;
+  locale?: string;
+}) => {
+  try {
+    // Render React component to HTML
+    const html = await renderAsync(
+      React.createElement(WaitlistConfirmationEmail, {
+        email,
+        locale,
+      })
+    );
 
-The default email template is located in `components/emails/WaitlistConfirmation.tsx` and can be customized as needed.
+    // Send email with verified domain
+    const { data, error } = await resend.emails.send({
+      from: config.resend.fromNoReply,
+      to: email,
+      subject: `Welcome to PreLaunch Waitlist!`,
+      html,
+      replyTo: config.resend.fromAdmin,
+    });
+
+    return { success: true, data };
+  } catch (error) {
+    console.error("Failed to send waitlist confirmation email:", error);
+    return { error: true, message: "Failed to send email" };
+  }
+};
+```
+
+The default email template is located in `components/emails/WaitlistConfirmationEmail.tsx` and can be customized as needed.
 
 ## Frequently Asked Questions
 
 <AccordionGroup>
   <Accordion title="How do I export waitlist user data?">
-    You can export user data through database management tools (like MongoDB Compass or Supabase Console), or create an admin API to retrieve this data.
+    You can export user data through the Supabase Console, or use the `getWaitlistUsers` function provided in `libs/supabase/waitlist.ts` to create an admin API for data retrieval.
   </Accordion>
   <Accordion title="How do I modify the waitlist styling?">
-    You can customize the styling by editing the `ButtonLead.tsx` or `TypeformWaitlist.tsx` components, or by using Tailwind CSS classes to adjust the appearance.
+    You can customize the styling by editing the `TypeformWaitlist.tsx` component, or by using Tailwind CSS classes to adjust the appearance.
   </Accordion>
-  <Accordion title="Does the waitlist support multiple languages?">
-    Yes, all display text can be configured through the multi-language files at `locales/[lang]/common.json`.
+  <Accordion title="Can I add additional fields to the waitlist form?">
+    Yes, you can customize the `TypeformWaitlist` component to include additional fields. You would also need to update the Supabase table schema and the API endpoint to handle the additional fields.
   </Accordion>
 </AccordionGroup>
 
@@ -167,21 +228,24 @@ Here's a complete example of a waitlist landing page:
 
 ```tsx
 // app/page.tsx
-import { Hero } from '@/components/landing/Hero';
-import { Features } from '@/components/landing/Features';
-import { ButtonLead } from '@/components/ButtonLead';
-import { FAQ } from '@/components/landing/FAQ';
+import Hero from '@/components/landing/Hero';
+import Features from '@/components/landing/Features';
+import FAQ from '@/components/landing/FAQ';
+import TypeformWaitlist from '@/components/landing/TypeformWaitlist';
 
 export default function Home() {
   return (
     <main>
-      <Hero
-        title="Product Validation Landing Page"
-        subtitle="Quickly build professional websites, validate product ideas, and collect user feedback"
-        ctaComponent={<ButtonLead size="lg" />}
-      />
+      <Hero />
       <Features />
       <FAQ />
+      
+      {/* You can also add the waitlist form in a dedicated section */}
+      <section className="container mx-auto py-24">
+        <div className="max-w-md mx-auto">
+          <TypeformWaitlist />
+        </div>
+      </section>
     </main>
   );
 }
@@ -199,7 +263,7 @@ export default function Home() {
   </Card>
   <Card
     title="User Voting Feature"
-    icon="vote-yea"
+    icon="check-to-slot"
     href="/features/voting"
   >
     Allow users to vote for features

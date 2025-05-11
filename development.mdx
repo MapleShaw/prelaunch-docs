@@ -1,10 +1,10 @@
 ---
-title: 'Development'
-description: 'How to set up and develop the PreLaunch project'
+title: 'Development Guide'
+description: 'Detailed development documentation for the PreLaunch project'
 ---
 
 <Info>
-  **Prerequisite**: Please install Node.js (version 16 or higher) and npm, yarn, or pnpm.
+  **Prerequisite**: Please install Node.js (version 16 or higher) and npm, yarn, or pnpm. For basic setup steps, refer to the [Quick Start](/docs/quickstart) guide.
 </Info>
 
 ## Technology Stack
@@ -15,50 +15,9 @@ PreLaunch is built with the following core technologies:
 - **UI Frameworks**: Tailwind CSS, DaisyUI, Radix UI
 - **State Management**: React Hooks
 - **Form Handling**: React Hook Form + Zod
-- **Internationalization**: next-intl
 - **Database**: Supabase (PostgreSQL)
 - **Authentication**: NextAuth.js
 - **Payment Processing**: Paddle
-
-## Development Environment Setup
-
-### Step 1: Clone and Install
-
-Clone the repository and install dependencies:
-
-```bash
-git clone https://github.com/MapleShaw/prelaunch.git
-cd prelaunch
-npm install
-```
-
-### Step 2: Environment Configuration
-
-Copy the `.env.local.example` file to `.env.local`:
-
-```bash
-cp .env.local.example .env.local
-```
-
-Configure necessary environment variables in `.env.local`:
-
-```
-# Basic configuration
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your_nextauth_secret
-
-# Supabase configuration
-NEXT_PUBLIC_SUPABASE_URL=your-supabase-url-here
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key-here
-```
-
-### Step 3: Start Development Server
-
-```bash
-npm run dev
-```
-
-The project will be available at `http://localhost:3000`.
 
 ## Supabase Database Configuration
 
@@ -171,38 +130,31 @@ Multiple authentication methods are supported:
 - Google OAuth
 - GitHub OAuth
 
-## Payment Integration
+## Payment Integration Details
 
-### Paddle Configuration
+### Paddle Integration
 
-1. Create a [Paddle](https://paddle.com/) account
-2. Configure Paddle environment variables in your `.env.local` file:
-   ```
-   PADDLE_SANDBOX=true
-   PADDLE_API_KEY=your-api-key-here
-   PADDLE_NOTIFICATION_WEBHOOK_SECRET=your-webhook-secret-here
-   NEXT_PUBLIC_PADDLE_CLIENT_TOKEN=your-paddle-client-token-here
-   ```
+For Paddle integration, PreLaunch includes:
+- Webhook handling in the `/api/webhooks/paddle` endpoint
+- Client-side checkout components in `components/checkout`
+- Server-side API helpers in `libs/paddle`
+
+For more about Paddle configuration, see the [Payment Integration](/features/payments) guide.
 
 ### Typeform Integration
 
-1. Create a [Typeform](https://www.typeform.com/) account
-2. Configure related environment variables:
-   ```
-   TYPEFORM_ACCESS_TOKEN=your_typeform_access_token
-   TYPEFORM_VOTE_FORM_ID=your_vote_form_id
-   TYPEFORM_SUGGESTION_FORM_ID=your_suggestion_form_id
-   ```
+PreLaunch integrates Typeform for user voting and suggestion collection:
+- The embedded forms are available through `@typeform/embed-react`
+- The forms are integrated in `components/landing/suggestion-form.tsx` and `components/landing/vote-form.tsx`
 
-## Project Structure
+## Advanced Project Structure
 
 ```
 ├── app/                  # Next.js App Router pages
 │   ├── api/              # API routes
+│   │   └── webhooks/     # Webhook handlers for Paddle, etc.
 │   ├── blog/             # Blog pages and content
 │   ├── dashboard/        # User dashboard
-│   ├── pricing/          # Pricing page
-│   ├── checkout/         # Checkout flow
 │   └── ...               # Other pages
 ├── components/           # React components
 │   ├── analytics/        # Analytics-related components
@@ -214,15 +166,7 @@ Multiple authentication methods are supported:
 ├── libs/                 # Utility libraries
 │   ├── paddle/           # Paddle payment integration
 │   ├── supabase/         # Supabase client and functionalities
-│   ├── next-auth.ts      # NextAuth configuration
-│   ├── resend.ts         # Email sending functionality
 │   └── ...               # Other function libraries
-├── locales/              # Internationalization translation files
-│   ├── en/               # English translations
-│   └── zh/               # Chinese translations
-├── models/               # Data models
-├── public/               # Static assets
-├── styles/               # Global styles
 ├── hooks/                # Custom React hooks
 └── types/                # TypeScript type definitions
 ```
@@ -242,33 +186,19 @@ Multiple authentication methods are supported:
     Check that your Supabase URL and key are correct. Make sure your IP address is not blocked by Supabase and that the database tables are correctly created.
   </Accordion>
   
-  <Accordion title='Internationalization Issues'>
-    If internationalization is not working, check the `middleware.ts` file and the `app/[locale]` directory structure.
+  <Accordion title='Authentication Issues'>
+    If authentication is not working, check the NextAuth.js configuration and ensure all necessary environment variables are set correctly.
   </Accordion>
 </AccordionGroup>
-
-## Deployment
-
-### Vercel Deployment
-
-1. Push your code to a GitHub repository
-2. Create a new project on [Vercel](https://vercel.com/)
-3. Import your GitHub repository
-4. Add the necessary environment variables
-5. Click deploy
-
-### Other Platforms
-
-PreLaunch can also be deployed to Netlify, Railway, or any other host that supports Next.js. Make sure to set all the necessary environment variables.
 
 ## Common Development Tasks
 
 ### Adding a New Page
 
-Add a new directory and page component in the `app/[locale]` directory:
+Add a new directory and page component in the `app` directory:
 
 ```tsx
-// app/[locale]/new-page/page.tsx
+// app/new-page/page.tsx
 export default function NewPage() {
   return (
     <div>
@@ -279,20 +209,22 @@ export default function NewPage() {
 }
 ```
 
-### Adding New Translations
+### Working with the Database
 
-Add new translation keys in the appropriate files in the `locales/{language}` directory:
+For adding a new table to Supabase, you'll need to:
 
-```json
-// locales/en/common.json
-{
-  "newKey": "New translation text"
-}
-```
+1. Create the table in the Supabase dashboard or using SQL
+2. Define TypeScript types in the `types` directory
+3. Create helper functions in `libs/supabase` for common operations
 
-```json
-// locales/zh/common.json
-{
-  "newKey": "新的翻译文本"
+```typescript
+// Example of a database helper in libs/supabase/helpers.ts
+export async function addToWaitlist(email: string, name?: string) {
+  const supabase = await createClient();
+  
+  return await supabase
+    .from('waitlist')
+    .insert([{ email, name }])
+    .select();
 }
 ```

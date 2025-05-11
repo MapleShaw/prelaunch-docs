@@ -1,5 +1,5 @@
 ---
-title: Introduction to PreLaunch
+title: Introduction
 description: "High-quality landing page template focused on product validation"
 ---
 
@@ -22,11 +22,11 @@ PreLaunch is a high-quality startup landing page template focused on product val
 
 <CardGroup cols={2}>
   <Card
-    title="Multi-language Support"
-    icon="language"
-    href="/features/multilanguage"
+    title="Responsive Design"
+    icon="mobile"
+    href="/features/responsive"
   >
-    Built-in English and Chinese support, easily extendable to other languages
+    Perfect display on all devices
   </Card>
   <Card
     title="Waitlist Collection"
@@ -37,10 +37,17 @@ PreLaunch is a high-quality startup landing page template focused on product val
   </Card>
   <Card
     title="User Voting System"
-    icon="vote-yea"
+    icon="check-to-slot"
     href="/features/voting"
   >
     Let users vote for future features through Typeform integration
+  </Card>
+  <Card
+    title="User Suggestion Collection"
+    icon="comment-dots"
+    href="/features/suggestions"
+  >
+    Collect user suggestions and feedback
   </Card>
   <Card
     title="Roadmap Display"
@@ -57,18 +64,25 @@ PreLaunch is a high-quality startup landing page template focused on product val
     Content marketing with fully featured blog functionality
   </Card>
   <Card
-    title="Payment Integration"
-    icon="credit-card"
-    href="/features/payments"
-  >
-    Integrated Paddle/Stripe payment systems
-  </Card>
-  <Card
     title="Dark/Light Mode"
     icon="moon"
     href="/customization/themes"
   >
     Automatic and manual theme switching
+  </Card>
+  <Card
+    title="SEO Optimization"
+    icon="search"
+    href="/features/seo"
+  >
+    Built-in SEO best practices to improve search engine visibility
+  </Card>
+  <Card
+    title="Analytics Tracking"
+    icon="chart-line"
+    href="/features/analytics"
+  >
+    Integrated Google Analytics to track user behavior and conversions
   </Card>
 </CardGroup>
 
@@ -83,13 +97,12 @@ PreLaunch is built with a modern technology stack ensuring high performance and 
   - [Radix UI](https://www.radix-ui.com/)
 - **State Management**: React Hooks
 - **Form Handling**: [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
-- **Internationalization**: [next-intl](https://next-intl-docs.vercel.app/)
 - **API Integrations**:
   - [Typeform](https://www.typeform.com/) - User voting and suggestion collection
   - [Resend](https://resend.com/) - Email sending
-  - [Paddle/Stripe](https://paddle.com/) - Payment processing
+  - [Paddle](https://paddle.com/) - Payment processing and subscription management
 - **Authentication**: [NextAuth.js](https://next-auth.js.org/)
-- **Database**: MongoDB and Supabase
+- **Database**: [Supabase](https://supabase.com/) (PostgreSQL)
 - **Deployment**: Supports Vercel, Netlify, and other platforms
 
 ## Project Structure
@@ -97,28 +110,25 @@ PreLaunch is built with a modern technology stack ensuring high performance and 
 ```
 ├── app/                  # Next.js App Router pages
 │   ├── api/              # API routes
-│   ├── blog/             # Blog pages and content
-│   ├── dashboard/        # User dashboard
-│   ├── pricing/          # Pricing page
-│   └── ...               # Other pages
+│   ├── blog/             # Blog system
+│   └── ...
 ├── components/           # React components
 │   ├── analytics/        # Analytics-related components
 │   ├── landing/          # Landing page components
 │   ├── ui/               # UI component library
-│   └── ...               # Other components
+│   └── ...
+├── config.ts             # Main configuration file
 ├── libs/                 # Utility libraries
-│   ├── paddle/           # Paddle payment integration
-│   ├── supabase/         # Supabase client
-│   ├── stripe.ts         # Stripe payment integration
-│   └── ...               # Other function libraries
-├── locales/              # Internationalization translation files
-│   ├── en/               # English translations
-│   └── zh/               # Chinese translations
+│   ├── paddle/           # Paddle integration
+│   ├── supabase/         # Supabase integration
+│   └── ...
 ├── public/               # Static assets
 │   ├── avatars/          # User avatars
 │   ├── blog/             # Blog images
-│   └── images/           # Other images and assets
+│   └── images/           # Other images and assets 
 ├── styles/               # Global styles
 ├── hooks/                # Custom React hooks
 └── types/                # TypeScript type definitions
 ```
+
+> **Note**: The internationalization feature has been simplified in this version. The project now focuses on core product validation features.
