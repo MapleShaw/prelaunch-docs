@@ -1,0 +1,18 @@
+# PreLaunch Documentation Site - docs.prelaunch.online
+User-agent: *
+Allow: /
+
+# This is the documentation site for PreLaunch
+# Main product site: https://www.prelaunch.online
+
+# Disallow internal/admin pages
+Disallow: /admin/
+Disallow: /api/
+Disallow: /_next/
+Disallow: /.git/
+
+# Host
+Host: https://docs.prelaunch.online
+
+# Sitemap - Mintlify automatically generates sitemap
+Sitemap: https://docs.prelaunch.online/sitemap.xml 

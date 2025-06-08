@@ -1,13 +1,29 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "willow",
-  "name": "Prelaunch",
+  "name": "PreLaunch Documentation",
+  "description": "Official documentation for PreLaunch - Next.js landing page template for startup product validation",
+  "url": "https://docs.prelaunch.online",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "favicon": "/favicon.svg",
   "colors": {
     "primary": "#006AD4",
     "light": "#007FFF",
     "dark": "#006AD4"
   },
-  "favicon": "/favicon.svg",
+  "seo": {
+    "indexHiddenPages": false,
+    "includeInSitemap": true
+  },
+  "metadata": {
+    "og:site_name": "PreLaunch Documentation",
+    "og:type": "website",
+    "twitter:card": "summary_large_image",
+    "twitter:site": "@msjiaozhu"
+  },
   "navigation": {
     "tabs": [
       {
@@ -57,10 +73,6 @@
         }
       ]
     }
-  },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
   },
   "navbar": {
     "links": [
